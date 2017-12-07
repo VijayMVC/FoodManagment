@@ -1,5 +1,6 @@
 package main.model.book;
 
+import main.model.food.Ingredient;
 import main.model.recipe.IRecipeChecker;
 import main.model.recipe.Recipe;
 
@@ -42,6 +43,16 @@ public class CookBook implements Serializable {
         List<Recipe> recipeList = new ArrayList<>();
         for(Recipe recipe : recipes.values()){
             if(checker.check(recipe))
+                recipeList.add(recipe);
+        }
+        return recipeList;
+    }
+
+    public List<Recipe> getRecipes(List<Ingredient> ingredients)
+    {
+        List<Recipe> recipeList = new ArrayList<>();
+        for(Recipe recipe : recipes.values()){
+            if(recipe.canBeMadeWith(ingredients))
                 recipeList.add(recipe);
         }
         return recipeList;

@@ -1,13 +1,7 @@
 package main.model.recipe;
-
-import main.model.book.CookBook;
-import main.model.book.DuplicateRecipeException;
-import main.model.cookBookIO.IOManager;
 import main.model.food.IIngredientChecker;
 import main.model.food.Ingredient;
-import main.model.units.MassMeasureUnit;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -49,8 +43,22 @@ public class Recipe implements Serializable {
         recipeIngredientList.add(recipeIngredient);
     }
 
+    public void removeIngredient(int index) throws IndexOutOfBoundsException {
+        if(recipeIngredientList.size() <= index || index < 0)
+            throw new IndexOutOfBoundsException();
+        else
+            recipeIngredientList.remove(index);
+    }
+
     public void addDirection(String direction){
         directions.add(direction);
+    }
+
+    public void removeDirection(int index) throws IndexOutOfBoundsException {
+        if(directions.size() <= index || index < 0)
+            throw new IndexOutOfBoundsException();
+        else
+            directions.remove(index);
     }
 
     public void setCookingTime(Duration cookingTime){
@@ -73,12 +81,19 @@ public class Recipe implements Serializable {
         return !this.contains(Ingredient::isDairyProduct);
     }
 
-    private boolean contains(IIngredientChecker checker){
-        for(RecipeIngredient recipeIngredient : recipeIngredientList){
-            if(checker.checkIfIs(recipeIngredient.getIngredient()))
-                return true;
+    public boolean canBeMadeWith(List<Ingredient> ingredientList){
+        for(RecipeIngredient recipeIngredient: recipeIngredientList){
+            boolean isInList = false;
+            for(Ingredient ingredient: ingredientList){
+                if(recipeIngredient.getIngredient() == ingredient) {
+                    isInList = true;
+                    break;
+                }
+            }
+            if(!isInList)
+                return false;
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -105,40 +120,12 @@ public class Recipe implements Serializable {
         return recipeName;
     }
 
-    public static void main (String args[]) throws IllegalQuantityValueException, IllegalMeasureArgumentException {
-        /*Recipe recipe = new Recipe("Masło");
-        Recipe recipe2 = new Recipe("Adam");
-        recipe.setCookingTime(Duration.ofMinutes(20));
-        recipe.setPreparationTime(Duration.ofMinutes(40));
-        recipe.addDirection("lel");
-        recipe.addDirection("a potem kek");
-        recipe.addDirection("a potem ni chu chu");
-        recipe.addRecipeIngredient(new RecipeIngredient(Ingredient.Hazelnut, MassMeasureUnit.Kilogram, 7*0.125/4 ));
-        CookBook cookBook = new CookBook("lolo");
-        try {
-            cookBook.addRecipe(recipe);
-            cookBook.addRecipe(recipe2);
-        } catch (DuplicateRecipeException e) {
-            e.printStackTrace();
+    private boolean contains(IIngredientChecker checker){
+        for(RecipeIngredient recipeIngredient : recipeIngredientList){
+            if(checker.checkIfIs(recipeIngredient.getIngredient()))
+                return true;
         }
-        List<CookBook> llist = new ArrayList<CookBook>();
-        llist.add(cookBook);
-        try {
-            IOManager.serialzie(llist,"/home/jakub/cookbook.ser");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
-        try {
-            List<CookBook> llist = IOManager.deserialzie("/home/jakub/cookbook.ser");
-            CookBook a = llist.get(0);
-            System.out.println(a.getRecipe("Masło").toString());
-            System.out.println(a.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
+        return false;
     }
+
 }
