@@ -6,6 +6,7 @@ import main.controler.parse.SimpleParser;
 import main.model.book.CookBook;
 import main.model.recipe.Recipe;
 import main.model.recipe.RecipeIngredient;
+import main.view.MessageViewer;
 import main.view.ViewManager;
 
 import java.io.BufferedReader;
@@ -42,7 +43,6 @@ public class Director {
         return focusedObject;
     }
 
-
     public ViewManager getViewManager() {
         return viewManager;
     }
@@ -66,11 +66,6 @@ public class Director {
                     return;
                 else {
                     director.getExecutionStrategy().execute(lines, director.getFocusedObject());
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }

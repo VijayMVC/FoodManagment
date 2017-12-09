@@ -26,31 +26,28 @@ public class UnfocusedExecution implements ExecutionStrategy {
     @Override
     public void execute(List<String> comandLine, Object o) {
         if(comandLine.isEmpty()){
-            viewManager.emptyComandLineMessage();
+            viewManager.messageViewer.printEmptyCommandLineMessage();
         }
-        else if(comandLine.get(0).substring(0,1).equals("/")){
+        else if (comandLine.get(0).substring(0,1).equals("/")){
             executeConsoleCommand(comandLine);
-        }
-        else{
-            return;
         }
     }
     /*
      * All commands which, start with '/' are assumed to be a ConsoleCommand and won't be associate with
      * any context.
     */
-    public void executeConsoleCommand(List<String> comandLine) {
+    protected void executeConsoleCommand(List<String> comandLine) {
         switch(comandLine.get(0)){
             case "/help":{
-                viewManager.printHelp();
+                viewManager.messageViewer.printHelp();
                 break;
             }
             case "/context":{
-                viewManager.printContext(director.getFocusedObject());
+                viewManager.messageViewer.printContext(director.getFocusedObject());
                 break;
             }
             case "/showBooks":{
-                viewManager.showBooks(director.getCookBooks());
+                viewManager.dataViewer.showBooks(director.getCookBooks());
                 break;
             }
             case "/selectBook":{
@@ -61,6 +58,45 @@ public class UnfocusedExecution implements ExecutionStrategy {
                 importBook(comandLine);
                 break;
             }
+            case "/export":{
+                exportBook(comandLine);
+                break;
+            }
+            case "/newBook":{
+                createNewBook(comandLine);
+                break;
+            }
+            default:{
+                viewManager.messageViewer.printWrongConsoleCommandMessage();
+                break;
+            }
+        }
+    }
+
+    private void createNewBook(List<String> comandLine) {
+        try {
+            String name = comandLine.get(1);
+            if(director.getCookBooks().get(name) != null) {
+                viewManager.messageViewer.printCreatingBookErrorMessage("book with that name already exists.");
+            }
+            else{
+                director.getCookBooks().put(name, new CookBook(name));
+            }
+        }
+        catch(IndexOutOfBoundsException e) {
+            viewManager.messageViewer.printCreatingBookErrorMessage("name was not definded.");
+        }
+    }
+
+    private void exportBook(List<String> comandLine) {
+        try {
+            String path = comandLine.get(1);
+            IOManager.serialzie(director.getCookBooks(), path);
+            viewManager.messageViewer.printSuccessExportMessage(path);
+        } catch (IndexOutOfBoundsException e) {
+            viewManager.messageViewer.printWrongExportMessage("path was not given.");
+        } catch (IOException e) {
+            viewManager.messageViewer.printWrongExportMessage("of wrong path.");
         }
     }
 
@@ -68,22 +104,32 @@ public class UnfocusedExecution implements ExecutionStrategy {
         try{
             String path = comandLine.get(1);
             Map<String, CookBook> cookBookMap = IOManager.deserialzie(path);
-            director.setCookBooks(cookBookMap);
+            Map<String, CookBook> currentCookBookMap = director.getCookBooks();
+            for(CookBook cookBook : cookBookMap.values()){
+                CookBook temp = currentCookBookMap.get(cookBook.toString());
+                if( temp == null)
+                    currentCookBookMap.put(cookBook.toString(), cookBook);
+                else{
+                    if(!cookBook.equals(temp))
+                        currentCookBookMap.put(cookBook.toString() + "I", cookBook);
+                }
+            }
+            viewManager.messageViewer.printSuccessImportMessage(path);
         }
         catch(IndexOutOfBoundsException e){
-            viewManager.printWrongImportMessage("path was not given.");
+            viewManager.messageViewer.printWrongImportMessage("path was not given.");
         }catch(EOFException e ){
-            viewManager.printWrongImportMessage("program found end of file. Make sure that selected directory is " +
+            viewManager.messageViewer.printWrongImportMessage("program found end of file. Make sure that selected directory is " +
                     "not an empty file.");
         } catch(StreamCorruptedException e ){
-            viewManager.printWrongImportMessage("wrong type of stream. File may have wrong type, make sure " +
+            viewManager.messageViewer.printWrongImportMessage("wrong type of stream. File may have wrong type, make sure " +
                     "the path point at \".ser\" file.");
         } catch(InvalidClassException e){
-            viewManager.printWrongImportMessage("deprecated version of book file.");
+            viewManager.messageViewer.printWrongImportMessage("deprecated version of book file.");
         } catch (IOException e) {
-            viewManager.printWrongImportMessage("path was wrong.");
+            viewManager.messageViewer.printWrongImportMessage("of wrong path.");
         } catch (ClassNotFoundException e) {
-            viewManager.printWrongImportMessage("CookBook is not defined.");
+            viewManager.messageViewer. printWrongImportMessage("CookBook is not defined.");
         }
     }
 
@@ -93,13 +139,13 @@ public class UnfocusedExecution implements ExecutionStrategy {
            Map<String,CookBook> cookBookMap = director.getCookBooks();
            CookBook cookBook = cookBookMap.get(cookBookName);
            if( cookBook == null)
-               viewManager.printWrongBookMessage("there is no such book," +
+               viewManager.messageViewer.printWrongBookMessage("there is no such book," +
                        " check if you spelled name properly");
            else
                director.setFocusedObject(cookBook);
        }
        catch (IndexOutOfBoundsException e) {
-           viewManager.printWrongBookMessage("name of book was not given");
+           viewManager.messageViewer.printWrongBookMessage("name of book was not given");
        }
     }
 }

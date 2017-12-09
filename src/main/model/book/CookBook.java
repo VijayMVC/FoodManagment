@@ -48,8 +48,7 @@ public class CookBook implements Serializable {
         return recipeList;
     }
 
-    public List<Recipe> getRecipes(List<Ingredient> ingredients)
-    {
+    public List<Recipe> getRecipes(List<Ingredient> ingredients) {
         List<Recipe> recipeList = new ArrayList<>();
         for(Recipe recipe : recipes.values()){
             if(recipe.canBeMadeWith(ingredients))
@@ -66,6 +65,23 @@ public class CookBook implements Serializable {
         List<String> tableOfContents = new ArrayList<String>(recipes.keySet());
         Collections.sort(tableOfContents, String::compareTo);
         return tableOfContents;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof CookBook))
+            return false;
+        if(!this.toString().equals(obj.toString()))
+            return false;
+        if(this.recipes.size() != ((CookBook) obj).recipes.size())
+            return false;
+        for(String recipeName : this.recipes.keySet()) {
+            if(((CookBook) obj).recipes.get(recipeName) == null )
+                return false;
+        }
+        return true;
     }
 
     @Override

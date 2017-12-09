@@ -3,9 +3,12 @@ package main.model.cookBookIO;
 import main.model.book.CookBook;
 
 import java.io.*;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * https://www.tutorialspoint.com/java/java_serialization.htm
+ */
 public class IOManager {
     public static void serialzie(Map<String, CookBook> cookBookMap, String outputFilePath) throws IOException {
         File file = new File(outputFilePath);
@@ -26,7 +29,8 @@ public class IOManager {
     }
 
     public static void main(String args[]) throws IOException, ClassNotFoundException {
-       // Map<String, CookBook> c = deserialzie("/home/jakub/aqwe/");
-
+        serialzie(new HashMap<String, CookBook>() ,"alaasd");
+        System.out.println("sad");
+        //Map<String , CookBook>  aa= deserialzie("/home/jakub/alasad");
     }
 }
