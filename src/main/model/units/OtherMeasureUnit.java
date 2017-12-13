@@ -12,7 +12,7 @@ public enum OtherMeasureUnit implements IMeasureable, Serializable {
     }
 
     @Override
-    public double getValueOf(IMeasureable measureable) throws NotConvertableException {
+    public double getValueIn(IMeasureable measureable) throws NotConvertableException {
         if (measureable.getClass().equals(VolumeMeasureUnit.class))
             throw new NotConvertableException("Conversion from" +
                     " Simple Unit to volume is not supported");

@@ -1,5 +1,7 @@
 package main.model.book;
 
+import main.model.collection.CookBookNotFoundException;
+import main.model.collection.DuplicateCookBookException;
 import main.model.food.Ingredient;
 import main.model.recipe.IRecipeChecker;
 import main.model.recipe.Recipe;
@@ -19,9 +21,8 @@ public class CookBook implements Serializable {
     }
 
     public CookBook(String cookBookName){
-        this(cookBookName, new HashMap<String, Recipe>());
+        this(cookBookName, new HashMap<>());
     }
-
 
     public void addRecipe(Recipe recipe) throws DuplicateRecipeException {
         if(recipes.get(recipe.getRecipeName()) != null)
@@ -33,22 +34,22 @@ public class CookBook implements Serializable {
         recipes.remove(recipeName);
     }
 
-    public List<Recipe> getRecipes(IRecipeChecker checker){
-        List<Recipe> recipeList = new ArrayList<>();
+    public Map<String, Recipe> getRecipes(IRecipeChecker checker){
+        Map<String, Recipe> recipeMap = new HashMap<>();
         for(Recipe recipe : recipes.values()){
             if(checker.check(recipe))
-                recipeList.add(recipe);
+                recipeMap.put(recipe.getRecipeName(),recipe);
         }
-        return recipeList;
+        return recipeMap;
     }
 
-    public List<Recipe> getRecipes(List<Ingredient> ingredients) {
-        List<Recipe> recipeList = new ArrayList<>();
+    public Map<String, Recipe> getRecipes(List<Ingredient> ingredients) {
+        Map<String, Recipe> recipeMap = new HashMap<>();
         for(Recipe recipe : recipes.values()){
             if(recipe.canBeMadeWith(ingredients))
-                recipeList.add(recipe);
+                recipeMap.put(recipe.getRecipeName(),recipe);
         }
-        return recipeList;
+        return recipeMap;
     }
 
     public Recipe getRecipe(String recipeName){
@@ -61,7 +62,7 @@ public class CookBook implements Serializable {
         return tableOfContents;
     }
 
-    public void merge(String cookBookName,CookBook other){
+    public void merge(CookBook other){
         for(Recipe recipe : other.recipes.values()){
             Recipe tempRecipe = recipes.get(recipe.getRecipeName());
             if(tempRecipe == null) // not in map
@@ -102,5 +103,16 @@ public class CookBook implements Serializable {
     @Override
     public String toString() {
         return cookBookName;
+    }
+
+    public void renameRecipe(String oldName, String newName) throws RecipeNotFoundException, DuplicateRecipeException {
+        Recipe recipe = recipes.get(oldName);
+        if(recipe == null)
+            throw new RecipeNotFoundException();
+        if(recipes.get(newName)!=null)
+            throw new DuplicateRecipeException();
+        recipes.remove(oldName);
+        recipe.setRecipeName(newName);
+        recipes.put(newName,recipe);
     }
 }

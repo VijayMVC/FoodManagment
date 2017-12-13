@@ -82,4 +82,15 @@ public class CookBookCollection implements Serializable {
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
     }
+
+    public void renameCookBook(String oldName, String newName) throws CookBookNotFoundException, DuplicateCookBookException {
+        CookBook cookBook = cookBooks.get(oldName);
+        if(cookBook == null)
+            throw new CookBookNotFoundException();
+        if(cookBooks.get(newName)!=null)
+            throw new DuplicateCookBookException();
+        cookBooks.remove(oldName);
+        cookBook.setCookBookName(newName);
+        cookBooks.put(newName,cookBook);
+    }
 }

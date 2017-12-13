@@ -51,7 +51,7 @@ public class RecipeIngredient implements Serializable {
     }
 
     public void convertToMeasureUnit(IMeasureable measureable) throws NotConvertableException {
-        double fraction = this.measureable.getValueOf(measureable);
+        double fraction = this.measureable.getValueIn(measureable);
         quantity *= fraction;
         this.measureable = measureable;
     }

@@ -12,7 +12,7 @@ public enum MassMeasureUnit implements IMeasureable, Serializable {
     }
 
     @Override
-    public double getValueOf(IMeasureable measureable) throws NotConvertableException {
+    public double getValueIn(IMeasureable measureable) throws NotConvertableException {
         if(measureable.getClass().equals(VolumeMeasureUnit.class))
             throw new NotConvertableException("Conversion from" +
                     " Mass to Volume is not supported");

@@ -74,37 +74,41 @@ public class UnfocusedExecution implements ExecutionStrategy {
                 break;
             }
             case "/showCollectionName":{
-                viewManager.messageViewer.printCollectionName(director.getCookBookCollection().getCollectionName());
+                viewManager.messageViewer.printMessage("Collection name:" + director.getCookBookCollection().getCollectionName());
                 break;
             }
             default:{
-                viewManager.messageViewer.printWrongConsoleCommandMessage();
+                viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
+                        " available commands");
                 break;
             }
         }
     }
 
     private void setCollectionName(List<String> commandLine) {
-        if(commandLine.size() < 2)
-            viewManager.messageViewer.printPropertyErrorMessage("CollectionName", "name was not provide");
-        else
+        try{
             director.getCookBookCollection().setCollectionName(commandLine.get(1));
+        }
+        catch(IndexOutOfBoundsException e) {
+            viewManager.messageViewer.printErrorMessage("Failed to set CollectionName because name was not provided.");
+        }
     }
 
-    protected void executeContextCommand(List<String> commandLine){ }
+    protected void executeContextCommand(List<String> commandLine){viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
+            " available commands"); }
 
     private void createNewBook(List<String> commandLine) {
         try {
             String name = commandLine.get(1);
             if(director.getCookBookCollection().getCookBooks().get(name) != null) {
-                viewManager.messageViewer.printCreatingBookErrorMessage("book with that name already exists.");
+                viewManager.messageViewer.printErrorMessage("Failed to create book, book with that name already exists.");
             }
             else{
                 director.getCookBookCollection().getCookBooks().put(name, new CookBook(name));
             }
         }
         catch(IndexOutOfBoundsException e) {
-            viewManager.messageViewer.printCreatingBookErrorMessage("name was not defined.");
+            viewManager.messageViewer.printErrorMessage("Failed to create book, name was not defined.");
         }
     }
 
@@ -112,13 +116,14 @@ public class UnfocusedExecution implements ExecutionStrategy {
         try {
             String path = commandLine.get(1);
             director.getCookBookCollection().serialize(path);
-            viewManager.messageViewer.printSuccessExportMessage(path);
+            viewManager.messageViewer.printMessage("Successfully exported books to " + path);
         } catch (IndexOutOfBoundsException e) {
-            viewManager.messageViewer.printWrongExportMessage("name was not defined.");
+            viewManager.messageViewer.printErrorMessage("Failed to export Book because name was not defined.");
         } catch (IOException e) {
-            viewManager.messageViewer.printWrongExportMessage("of wrong path.");
+            viewManager.messageViewer.printErrorMessage("Failed to export Book because of wrong path.");
         } catch (UnnamedCollectionException e) {
-            viewManager.messageViewer.printWrongExportMessage("current collection you want to export is unnamed" +
+            viewManager.messageViewer.printErrorMessage("Failed to export Book because current collection " +
+                    "you want to export is unnamed" +
                     " use command /setCollectionName and try again.");
         }
     }
@@ -129,24 +134,31 @@ public class UnfocusedExecution implements ExecutionStrategy {
             CookBookCollection cookBookCollection = CookBookCollection.deserialize(path);
             CookBookCollection currentCookBookCollection =director.getCookBookCollection();
             currentCookBookCollection.merge(cookBookCollection);
-            viewManager.messageViewer.printSuccessImportMessage(path);
+            viewManager.messageViewer.printMessage("successfully imported books from " + path);
         }
         catch(IndexOutOfBoundsException e){
-            viewManager.messageViewer.printWrongImportMessage("path was not given.");
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
+                    "path was not given.");
         }catch(EOFException e ){
-            viewManager.messageViewer.printWrongImportMessage("program found end of file. Make sure that selected directory is " +
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
+                    "program found end of file. Make sure that selected directory is " +
                     "not an empty file.");
         } catch(StreamCorruptedException e ){
-            viewManager.messageViewer.printWrongImportMessage("wrong type of stream. File may have wrong type, make sure " +
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
+                    "wrong type of stream. File may have wrong type, make sure " +
                     "the path point at \".ser\" file.");
         } catch(InvalidClassException e){
-            viewManager.messageViewer.printWrongImportMessage("obsolete version of book file.");
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
+                    "obsolete version of book file.");
         } catch (IOException e) {
-            viewManager.messageViewer.printWrongImportMessage("of wrong path.");
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because" +
+                    " of wrong path.");
         } catch (ClassNotFoundException e) {
-            viewManager.messageViewer. printWrongImportMessage("CookBook is not defined.");
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
+                    "CookBook is not defined.");
         } catch (MergeSameNamedCollectionsException e) {
-            viewManager.messageViewer. printWrongImportMessage(" current cookBookCollection name and name of" +
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
+                    " current cookBookCollection name and name of" +
                     "\n imported collection are the same. This operation is forbidden, because of safety measures," +
                     "\n make sure if you want continue operation. To import this collection change one of collection names");
         }
@@ -158,13 +170,15 @@ public class UnfocusedExecution implements ExecutionStrategy {
            Map<String,CookBook> cookBookMap = director.getCookBookCollection().getCookBooks();
            CookBook cookBook = cookBookMap.get(cookBookName);
            if( cookBook == null)
-               viewManager.messageViewer.printWrongBookMessage("there is no such book," +
+               viewManager.messageViewer.printErrorMessage(" Fail to select Book because " +
+                       " there is no such book," +
                        " check if you spelled name properly");
            else
                director.setFocusedObject(cookBook);
        }
        catch (IndexOutOfBoundsException e) {
-           viewManager.messageViewer.printWrongBookMessage("name was not defined.");
+           viewManager.messageViewer.printErrorMessage("Fail to select Book because " +
+                   "name was not defined.");
        }
     }
 }

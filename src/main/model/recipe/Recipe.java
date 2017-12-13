@@ -99,22 +99,7 @@ public class Recipe implements Serializable {
 
     @Override
     public String toString() {
-        String recipeStr = "Recipe: " + this.recipeName + "\n\n";
-        recipeStr += "Preparation time: " + preparationTime.toString() + "\n";
-        recipeStr += "Cooking Time: " + cookingTime.toString() + "\n\n";
-        recipeStr += "Ingriedients:\n";
-        for (RecipeIngredient recipeIngredient : recipeIngredientList) {
-            recipeStr += "\t* " + recipeIngredient.toString(true) + "\n";
-        }
-        recipeStr += "\nDirections:\n";
-        int index = 1;
-        for (String direction : directions) {
-            recipeStr += "\t" + String.valueOf(index) + ". " + direction + "\n";
-            index++;
-        }
-        if(tip!=null)
-            recipeStr += "\nTip: " + this.tip;
-        return recipeStr;
+        return recipeName;
     }
 
     public String getRecipeName() {

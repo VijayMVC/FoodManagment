@@ -20,6 +20,7 @@ public class Director {
     private CookBookCollection cookBookCollection;
     private ExecutionStrategy executionStrategy;
     private Object focusedObject; // context of Execution Strategy/
+    private Object lastFocusedObject;
     private ViewManager viewManager;
 
     public Director(IParser parser) {
@@ -50,8 +51,8 @@ public class Director {
         return cookBookCollection;
     }
 
-    public void setCookBookCollection(CookBookCollection cookBookCollection) {
-        this.cookBookCollection = cookBookCollection;
+    public Object getLastFocusedObject() {
+        return lastFocusedObject;
     }
 
     public static void main(String[] args){
@@ -74,6 +75,7 @@ public class Director {
     }
 
     public void setFocusedObject(Object focusedObject) {
+        this.lastFocusedObject = this.focusedObject;
         this.focusedObject = focusedObject;
         if(focusedObject instanceof CookBook)
             executionStrategy = new CookBookExecution(this);
