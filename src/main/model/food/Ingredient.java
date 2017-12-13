@@ -1,6 +1,6 @@
 package main.model.food;
 
-import main.model.units.IMeasureable;
+import main.model.units.IMeasurable;
 import main.model.units.MassMeasureUnit;
 import main.model.units.VolumeMeasureUnit;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 public enum Ingredient implements Serializable {
     Hazelnut(false, false, true, Arrays.asList(MassMeasureUnit.values())),
-    ChickeBreast(true, false, false, Arrays.asList(MassMeasureUnit.values())),
+    ChickenBreast(true, false, false, Arrays.asList(MassMeasureUnit.values())),
     Flour(false, false, false, Arrays.asList(MassMeasureUnit.values())),
     Salt(false, false, false, Arrays.asList(MassMeasureUnit.values())),
     OliveOil(false, false, false, Arrays.asList(VolumeMeasureUnit.values())),
@@ -50,7 +50,7 @@ public enum Ingredient implements Serializable {
     }
 
     public boolean isProperMeasureUnit(Object o){
-        if(!(o instanceof IMeasureable))
+        if(!(o instanceof IMeasurable))
             return false;
         for(Enum properMeasure : properMeasures ){
             if(o.getClass().equals(properMeasure.getClass()))
@@ -58,5 +58,6 @@ public enum Ingredient implements Serializable {
         }
         return false;
     }
+
 
 }

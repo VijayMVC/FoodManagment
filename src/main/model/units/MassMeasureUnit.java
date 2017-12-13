@@ -2,7 +2,7 @@ package main.model.units;
 
 import java.io.Serializable;
 
-public enum MassMeasureUnit implements IMeasureable, Serializable {
+public enum MassMeasureUnit implements IMeasurable, Serializable {
     Kilogram(1), Gram(0.001), Pound(0.4535);
 
     private double fractionOfkilogram;
@@ -12,7 +12,7 @@ public enum MassMeasureUnit implements IMeasureable, Serializable {
     }
 
     @Override
-    public double getValueIn(IMeasureable measureable) throws NotConvertableException {
+    public double getValueIn(IMeasurable measureable) throws NotConvertableException {
         if(measureable.getClass().equals(VolumeMeasureUnit.class))
             throw new NotConvertableException("Conversion from" +
                     " Mass to Volume is not supported");
@@ -29,5 +29,13 @@ public enum MassMeasureUnit implements IMeasureable, Serializable {
 
     public String toString(){
         return this.name().toLowerCase();
+    }
+
+    public static boolean isValueOf(String str){
+        for(MassMeasureUnit measure :MassMeasureUnit.values()){
+            if(str.toLowerCase().equals(measure.toString()))
+                return true;
+        }
+        return false;
     }
 }

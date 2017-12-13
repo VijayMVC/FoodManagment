@@ -31,7 +31,17 @@ public class HelpViewer {
     public void printRecipeHelp() {
         System.out.println("Available context functions: " +
                 "\n - setRecipeName" +
-                "\n - addDirection" +
-                "\n - removeDirection");
+                "\n - addDirection [Direction]" +
+                "\n - showRecipe" +
+                "\n - removeDirection index" +
+                "\n - addIngredient quantity measure ingredient" +
+                "\n - removeIngredient index" +
+                "\n - setPreparationTime hours minutes (int)" +
+                "\n - setCookingTime hours minutes (int)");
+    }
+
+    public void printRecipeIngredientHelp() {
+        System.out.println("Available context functions: " +
+                "\n - setRecipeName");
     }
 }

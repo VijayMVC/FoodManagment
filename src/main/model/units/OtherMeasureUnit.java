@@ -2,7 +2,7 @@ package main.model.units;
 
 import java.io.Serializable;
 
-public enum OtherMeasureUnit implements IMeasureable, Serializable {
+public enum OtherMeasureUnit implements IMeasurable, Serializable {
     Unit(1), Dozen(12);
 
     private double fractionOfUnit;
@@ -12,7 +12,7 @@ public enum OtherMeasureUnit implements IMeasureable, Serializable {
     }
 
     @Override
-    public double getValueIn(IMeasureable measureable) throws NotConvertableException {
+    public double getValueIn(IMeasurable measureable) throws NotConvertableException {
         if (measureable.getClass().equals(VolumeMeasureUnit.class))
             throw new NotConvertableException("Conversion from" +
                     " Simple Unit to volume is not supported");
@@ -29,6 +29,14 @@ public enum OtherMeasureUnit implements IMeasureable, Serializable {
 
     public String toString(){
         return this.name().toLowerCase();
+    }
+
+    public static boolean isValueOf(String str){
+        for(OtherMeasureUnit measure :OtherMeasureUnit.values()){
+            if(str.toLowerCase().equals(measure.toString()))
+                return true;
+        }
+        return false;
     }
 
 }

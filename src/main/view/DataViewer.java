@@ -1,6 +1,7 @@
 package main.view;
 
 import main.model.book.CookBook;
+import main.model.recipe.Recipe;
 import main.model.recipe.RecipeIngredient;
 
 import java.util.List;
@@ -27,23 +28,33 @@ public class DataViewer {
             i++;
         }
     }
-    /*
-    private void showRecipe(){
-        String recipeStr = "Recipe: " + this.recipeName + "\n\n";
-        recipeStr += "Preparation time: " + preparationTime.toString() + "\n";
-        recipeStr += "Cooking Time: " + cookingTime.toString() + "\n\n";
-        recipeStr += "Ingriedients:\n";
-        for (RecipeIngredient recipeIngredient : recipeIngredientList) {
+
+    public void showRecipe(Recipe recipe){
+        String recipeStr = "Recipe: " + recipe.getRecipeName() + "\n\n";
+        String preparationTime = "not known";
+        if(recipe.getPreparationTime() != null) {
+            preparationTime = recipe.getPreparationTime().toString();
+            preparationTime= preparationTime.substring(2,preparationTime.length());
+        }
+        String cookingTime = "not known";
+        if(recipe.getCookingTime() != null) {
+            cookingTime = recipe.getCookingTime().toString();
+            cookingTime= cookingTime.substring(2,cookingTime.length());
+        }
+        recipeStr += "Preparation time: " + preparationTime + "\n";
+        recipeStr += "Cooking Time: " + cookingTime + "\n\n";
+        recipeStr += "Ingredients:\n";
+        for (RecipeIngredient recipeIngredient : recipe.getRecipeIngredientList()) {
             recipeStr += "\t* " + recipeIngredient.toString(true) + "\n";
         }
         recipeStr += "\nDirections:\n";
         int index = 1;
-        for (String direction : directions) {
+        for (String direction : recipe.getDirections()) {
             recipeStr += "\t" + String.valueOf(index) + ". " + direction + "\n";
             index++;
         }
-        if(tip!=null)
-            recipeStr += "\nTip: " + this.tip;
-        return recipeStr;
-    }*/
+        if(recipe.getTip()!=null)
+            recipeStr += "\nTip: " + recipe.getTip();
+        System.out.println(recipeStr);
+    }
 }

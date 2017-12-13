@@ -62,14 +62,6 @@ public class Recipe implements Serializable {
             directions.remove(index);
     }
 
-    public void setCookingTime(Duration cookingTime){
-        this.cookingTime = cookingTime;
-    }
-
-    public void setPreparationTime(Duration preparationTime){
-        this.preparationTime = preparationTime;
-    }
-
     public boolean isVegetarian(){
         return !this.contains(Ingredient::isMeat);
     }
@@ -97,17 +89,52 @@ public class Recipe implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return recipeName;
+
+
+    public void setCookingTime(Duration cookingTime){
+        this.cookingTime = cookingTime;
     }
+
+    public void setPreparationTime(Duration preparationTime){
+        this.preparationTime = preparationTime;
+    }
+
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
+    }
+
+    public void setTip(String tip){
+        this.tip = tip;
+    }
+
 
     public String getRecipeName() {
         return recipeName;
     }
 
-    public void setRecipeName(String recipeName) {
-        this.recipeName = recipeName;
+    public Duration getPreparationTime() {
+        return preparationTime;
+    }
+
+    public Duration getCookingTime() {
+        return cookingTime;
+    }
+
+    public List<RecipeIngredient> getRecipeIngredientList() {
+        return recipeIngredientList;
+    }
+
+    public List<String> getDirections() {
+        return directions;
+    }
+
+    public String getTip() {
+        return tip;
+    }
+
+    @Override
+    public String toString() {
+        return recipeName;
     }
 
     @Override
@@ -126,6 +153,8 @@ public class Recipe implements Serializable {
         }
         return true;
     }
+
+
 
     private boolean contains(IIngredientChecker checker){
         for(RecipeIngredient recipeIngredient : recipeIngredientList){

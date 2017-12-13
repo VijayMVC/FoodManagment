@@ -157,10 +157,7 @@ public class UnfocusedExecution implements ExecutionStrategy {
             viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
                     "CookBook is not defined.");
         } catch (MergeSameNamedCollectionsException e) {
-            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " +
-                    " current cookBookCollection name and name of" +
-                    "\n imported collection are the same. This operation is forbidden, because of safety measures," +
-                    "\n make sure if you want continue operation. To import this collection change one of collection names");
+            viewManager.messageViewer.printErrorMessage("Fail to import cook book because " + e.getMessage());
         }
     }
 

@@ -1,28 +1,28 @@
 package main.model.recipe;
 
 import main.model.food.Ingredient;
-import main.model.units.IMeasureable;
+import main.model.units.IMeasurable;
 import main.model.units.NotConvertableException;
 
 import java.io.Serializable;
 
 public class RecipeIngredient implements Serializable {
     private Ingredient ingredient;
-    private IMeasureable measureable;
+    private IMeasurable measurable;
     private double quantity;
 
-    public RecipeIngredient(Ingredient ingredient, IMeasureable measureable, double quantity)
+    public RecipeIngredient(Ingredient ingredient, IMeasurable measurable, double quantity)
             throws IllegalQuantityValueException, IllegalMeasureArgumentException {
         setQuantity(quantity);
-        if(!ingredient.isProperMeasureUnit(measureable))
-            throw new IllegalMeasureArgumentException(measureable, ingredient);
+        if(!ingredient.isProperMeasureUnit(measurable))
+            throw new IllegalMeasureArgumentException(measurable, ingredient);
         this.ingredient = ingredient;
-        this.measureable = measureable;
+        this.measurable = measurable;
     }
 
-    public RecipeIngredient(Ingredient ingredient, IMeasureable measureable)
+    public RecipeIngredient(Ingredient ingredient, IMeasurable measurable)
             throws IllegalQuantityValueException, IllegalMeasureArgumentException{
-        this(ingredient, measureable, 1);
+        this(ingredient, measurable, 1);
     }
 
     public void setQuantity(double quantity) throws IllegalQuantityValueException {
@@ -33,14 +33,14 @@ public class RecipeIngredient implements Serializable {
 
     @Override
     public String toString(){
-        return Double.toString(quantity) + " " + measureable.toString() + " " + ingredient.toString();
+        return Double.toString(quantity) + " " + measurable.toString() + " " + ingredient.toString();
     }
 
     public String toString(boolean tryToSimplifyFractions){
         if(tryToSimplifyFractions){
             String quant = GetSimpleFractionOfQuantity();
             if(!quant.equals("")) {
-                return quant + " " + measureable.toString() + " " + ingredient.toString();
+                return quant + " " + measurable.toString() + " " + ingredient.toString();
             }
         }
         return this.toString();
@@ -50,10 +50,10 @@ public class RecipeIngredient implements Serializable {
         return ingredient;
     }
 
-    public void convertToMeasureUnit(IMeasureable measureable) throws NotConvertableException {
-        double fraction = this.measureable.getValueIn(measureable);
+    public void convertToMeasureUnit(IMeasurable measurable) throws NotConvertableException {
+        double fraction = this.measurable.getValueIn(measurable);
         quantity *= fraction;
-        this.measureable = measureable;
+        this.measurable = measurable;
     }
 
     private String GetSimpleFractionOfQuantity(){
