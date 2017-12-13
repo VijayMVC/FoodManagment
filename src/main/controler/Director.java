@@ -65,7 +65,7 @@ public class Director {
                 if(line.equals("quit") || line.equals("q") || line.equals("/q") || line.equals("/quit"))
                     return;
                 else {
-                    director.getExecutionStrategy().execute(lines, director.getFocusedObject());
+                    director.getExecutionStrategy().execute(lines);
                 }
             }
         }

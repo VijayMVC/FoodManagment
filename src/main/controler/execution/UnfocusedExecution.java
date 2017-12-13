@@ -14,8 +14,8 @@ import java.util.Map;
 
 
 public class UnfocusedExecution implements ExecutionStrategy {
-    private ViewManager viewManager;
-    private Director director;
+    protected ViewManager viewManager;
+    protected Director director;
 
 
     public UnfocusedExecution(Director director){
@@ -24,22 +24,23 @@ public class UnfocusedExecution implements ExecutionStrategy {
     }
 
     @Override
-    public void execute(List<String> comandLine, Object o) {
-        if(comandLine.isEmpty()){
+    public void execute(List<String> commandLine) {
+        if(commandLine.isEmpty()){
             viewManager.messageViewer.printEmptyCommandLineMessage();
         }
-        else if (comandLine.get(0).substring(0,1).equals("/")){
-            executeConsoleCommand(comandLine);
+        else if (commandLine.get(0).substring(0,1).equals("/")){
+            executeConsoleCommand(commandLine);
         }
+        else executeContextCommand(commandLine);
     }
     /*
      * All commands which, start with '/' are assumed to be a ConsoleCommand and won't be associate with
      * any context.
     */
-    protected void executeConsoleCommand(List<String> comandLine) {
-        switch(comandLine.get(0)){
+    private void executeConsoleCommand(List<String> commandLine) {
+        switch(commandLine.get(0)){
             case "/help":{
-                viewManager.messageViewer.printHelp();
+                viewManager.helpViewer.printHelp();
                 break;
             }
             case "/context":{
@@ -51,19 +52,19 @@ public class UnfocusedExecution implements ExecutionStrategy {
                 break;
             }
             case "/selectBook":{
-                selectBook(comandLine);
+                selectBook(commandLine);
                 break;
             }
             case "/import":{
-                importBook(comandLine);
+                importBook(commandLine);
                 break;
             }
             case "/export":{
-                exportBook(comandLine);
+                exportBook(commandLine);
                 break;
             }
             case "/newBook":{
-                createNewBook(comandLine);
+                createNewBook(commandLine);
                 break;
             }
             default:{
@@ -73,9 +74,11 @@ public class UnfocusedExecution implements ExecutionStrategy {
         }
     }
 
-    private void createNewBook(List<String> comandLine) {
+    protected void  executeContextCommand(List<String> commandLine){ }
+
+    private void createNewBook(List<String> commandLine) {
         try {
-            String name = comandLine.get(1);
+            String name = commandLine.get(1);
             if(director.getCookBooks().get(name) != null) {
                 viewManager.messageViewer.printCreatingBookErrorMessage("book with that name already exists.");
             }
@@ -88,9 +91,9 @@ public class UnfocusedExecution implements ExecutionStrategy {
         }
     }
 
-    private void exportBook(List<String> comandLine) {
+    private void exportBook(List<String> commandLine) {
         try {
-            String path = comandLine.get(1);
+            String path = commandLine.get(1);
             IOManager.serialzie(director.getCookBooks(), path);
             viewManager.messageViewer.printSuccessExportMessage(path);
         } catch (IndexOutOfBoundsException e) {
@@ -100,9 +103,9 @@ public class UnfocusedExecution implements ExecutionStrategy {
         }
     }
 
-    private void importBook(List<String> comandLine) {
+    private void importBook(List<String> commandLine) {
         try{
-            String path = comandLine.get(1);
+            String path = commandLine.get(1);
             Map<String, CookBook> cookBookMap = IOManager.deserialzie(path);
             Map<String, CookBook> currentCookBookMap = director.getCookBooks();
             for(CookBook cookBook : cookBookMap.values()){
@@ -125,7 +128,7 @@ public class UnfocusedExecution implements ExecutionStrategy {
             viewManager.messageViewer.printWrongImportMessage("wrong type of stream. File may have wrong type, make sure " +
                     "the path point at \".ser\" file.");
         } catch(InvalidClassException e){
-            viewManager.messageViewer.printWrongImportMessage("deprecated version of book file.");
+            viewManager.messageViewer.printWrongImportMessage("obsolete version of book file.");
         } catch (IOException e) {
             viewManager.messageViewer.printWrongImportMessage("of wrong path.");
         } catch (ClassNotFoundException e) {
@@ -133,9 +136,9 @@ public class UnfocusedExecution implements ExecutionStrategy {
         }
     }
 
-    private void  selectBook(List<String> comandLine){
+    private void  selectBook(List<String> commandLine){
        try {
-           String cookBookName = comandLine.get(1);
+           String cookBookName = commandLine.get(1);
            Map<String,CookBook> cookBookMap = director.getCookBooks();
            CookBook cookBook = cookBookMap.get(cookBookName);
            if( cookBook == null)

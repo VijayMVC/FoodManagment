@@ -10,6 +10,13 @@ import java.util.Map;
  * https://www.tutorialspoint.com/java/java_serialization.htm
  */
 public class IOManager {
+/*
+    public final Map<String,CookBook> cookBooks;
+
+    public IOManager() {
+        cookBooks = null;
+    }
+*/
     public static void serialzie(Map<String, CookBook> cookBookMap, String outputFilePath) throws IOException {
         File file = new File(outputFilePath);
         FileOutputStream fileOut = new FileOutputStream(file);

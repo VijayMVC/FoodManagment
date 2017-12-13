@@ -67,6 +67,17 @@ public class CookBook implements Serializable {
         return tableOfContents;
     }
 
+    public void merge(CookBook other){
+        for(Map.Entry<String, Recipe> recipe : other.recipes.entrySet()){
+            Recipe tempRecipe = recipes.get(recipe.getKey());
+            if(tempRecipe == null) // not in map
+                recipes.put(recipe.getKey(), recipe.getValue());
+            else if (!tempRecipe.equals(recipe.getValue())) // in map with same key but different value
+                recipes.put(other.toString() + "." + recipe.getKey(), recipe.getValue());
+        }
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         if(obj == null)

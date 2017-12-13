@@ -2,6 +2,7 @@ package main.view;
 
 import main.model.book.CookBook;
 
+import java.util.List;
 import java.util.Map;
 
 public class DataViewer {
@@ -13,6 +14,16 @@ public class DataViewer {
             System.out.println("Available books:");
             for (CookBook cookBook : cookBooks.values())
                 System.out.println("  * " + cookBook.toString());
+        }
+    }
+
+    public void showTableOfContents(CookBook focusedObject) {
+        List<String> table = focusedObject.getTableOfContents();
+        int i=1;
+        System.out.println("CookBook: " + focusedObject.toString());
+        for(String str:table){
+            System.out.println(((Integer) i).toString() + ". " + str );
+            i++;
         }
     }
 }

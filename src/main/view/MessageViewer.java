@@ -5,18 +5,6 @@ public class MessageViewer {
 
     public void printEmptyCommandLineMessage() { }
 
-    public void printHelp() {
-        System.out.println("Available functions: " +
-                "\n - /help" +
-                "\n - /context" +
-                "\n - /showBooks" +
-                "\n - /newBook bookName" +
-                "\n - /selectBook BookName" +
-                "\n - /import filePath" +
-                "\n - /export filePath" +
-                "\n - /quit");
-    }
-
     public void printContext(Object focusedObject) {
         String objectClass = "Console";
         if (focusedObject != null)
@@ -53,4 +41,5 @@ public class MessageViewer {
     public void printCreatingBookErrorMessage(String message) {
         System.out.println("Failed to create book, because " +message);
     }
+
 }

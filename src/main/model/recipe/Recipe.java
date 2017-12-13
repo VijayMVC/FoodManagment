@@ -1,4 +1,5 @@
 package main.model.recipe;
+import main.model.book.CookBook;
 import main.model.food.IIngredientChecker;
 import main.model.food.Ingredient;
 
@@ -118,6 +119,23 @@ public class Recipe implements Serializable {
 
     public String getRecipeName() {
         return recipeName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null)
+            return false;
+        if(!(obj instanceof Recipe))
+            return false;
+        if(!this.getRecipeName().equals(((Recipe)obj).getRecipeName()))
+            return false;
+        if(this.recipeIngredientList.size() != ((Recipe) obj).recipeIngredientList.size())
+            return false;
+        for(RecipeIngredient recipeIngredient :((Recipe) obj).recipeIngredientList){
+            if(!this.recipeIngredientList.contains(recipeIngredient))
+                return false;
+        }
+        return true;
     }
 
     private boolean contains(IIngredientChecker checker){
