@@ -2,7 +2,9 @@ package main.controler.execution;
 
 import main.controler.Director;
 import main.model.book.CookBook;
-import main.model.cookBookIO.IOManager;
+import main.model.collection.CookBookCollection;
+import main.model.collection.MergeSameNamedCollectionsException;
+import main.model.collection.UnnamedCollectionException;
 import main.view.ViewManager;
 
 import java.io.EOFException;
@@ -48,7 +50,7 @@ public class UnfocusedExecution implements ExecutionStrategy {
                 break;
             }
             case "/showBooks":{
-                viewManager.dataViewer.showBooks(director.getCookBooks());
+                viewManager.dataViewer.showBooks(director.getCookBookCollection().getCookBooks());
                 break;
             }
             case "/selectBook":{
@@ -67,6 +69,14 @@ public class UnfocusedExecution implements ExecutionStrategy {
                 createNewBook(commandLine);
                 break;
             }
+            case "/setCollectionName":{
+                setCollectionName(commandLine);
+                break;
+            }
+            case "/showCollectionName":{
+                viewManager.messageViewer.printCollectionName(director.getCookBookCollection().getCollectionName());
+                break;
+            }
             default:{
                 viewManager.messageViewer.printWrongConsoleCommandMessage();
                 break;
@@ -74,49 +84,51 @@ public class UnfocusedExecution implements ExecutionStrategy {
         }
     }
 
-    protected void  executeContextCommand(List<String> commandLine){ }
+    private void setCollectionName(List<String> commandLine) {
+        if(commandLine.size() < 2)
+            viewManager.messageViewer.printPropertyErrorMessage("CollectionName", "name was not provide");
+        else
+            director.getCookBookCollection().setCollectionName(commandLine.get(1));
+    }
+
+    protected void executeContextCommand(List<String> commandLine){ }
 
     private void createNewBook(List<String> commandLine) {
         try {
             String name = commandLine.get(1);
-            if(director.getCookBooks().get(name) != null) {
+            if(director.getCookBookCollection().getCookBooks().get(name) != null) {
                 viewManager.messageViewer.printCreatingBookErrorMessage("book with that name already exists.");
             }
             else{
-                director.getCookBooks().put(name, new CookBook(name));
+                director.getCookBookCollection().getCookBooks().put(name, new CookBook(name));
             }
         }
         catch(IndexOutOfBoundsException e) {
-            viewManager.messageViewer.printCreatingBookErrorMessage("name was not definded.");
+            viewManager.messageViewer.printCreatingBookErrorMessage("name was not defined.");
         }
     }
 
     private void exportBook(List<String> commandLine) {
         try {
             String path = commandLine.get(1);
-            IOManager.serialzie(director.getCookBooks(), path);
+            director.getCookBookCollection().serialize(path);
             viewManager.messageViewer.printSuccessExportMessage(path);
         } catch (IndexOutOfBoundsException e) {
-            viewManager.messageViewer.printWrongExportMessage("path was not given.");
+            viewManager.messageViewer.printWrongExportMessage("name was not defined.");
         } catch (IOException e) {
             viewManager.messageViewer.printWrongExportMessage("of wrong path.");
+        } catch (UnnamedCollectionException e) {
+            viewManager.messageViewer.printWrongExportMessage("current collection you want to export is unnamed" +
+                    " use command /setCollectionName and try again.");
         }
     }
 
     private void importBook(List<String> commandLine) {
         try{
             String path = commandLine.get(1);
-            Map<String, CookBook> cookBookMap = IOManager.deserialzie(path);
-            Map<String, CookBook> currentCookBookMap = director.getCookBooks();
-            for(CookBook cookBook : cookBookMap.values()){
-                CookBook temp = currentCookBookMap.get(cookBook.toString());
-                if( temp == null)
-                    currentCookBookMap.put(cookBook.toString(), cookBook);
-                else{
-                    if(!cookBook.equals(temp))
-                        currentCookBookMap.put(cookBook.toString() + "I", cookBook);
-                }
-            }
+            CookBookCollection cookBookCollection = CookBookCollection.deserialize(path);
+            CookBookCollection currentCookBookCollection =director.getCookBookCollection();
+            currentCookBookCollection.merge(cookBookCollection);
             viewManager.messageViewer.printSuccessImportMessage(path);
         }
         catch(IndexOutOfBoundsException e){
@@ -133,13 +145,17 @@ public class UnfocusedExecution implements ExecutionStrategy {
             viewManager.messageViewer.printWrongImportMessage("of wrong path.");
         } catch (ClassNotFoundException e) {
             viewManager.messageViewer. printWrongImportMessage("CookBook is not defined.");
+        } catch (MergeSameNamedCollectionsException e) {
+            viewManager.messageViewer. printWrongImportMessage(" current cookBookCollection name and name of" +
+                    "\n imported collection are the same. This operation is forbidden, because of safety measures," +
+                    "\n make sure if you want continue operation. To import this collection change one of collection names");
         }
     }
 
-    private void  selectBook(List<String> commandLine){
+    private void selectBook(List<String> commandLine){
        try {
            String cookBookName = commandLine.get(1);
-           Map<String,CookBook> cookBookMap = director.getCookBooks();
+           Map<String,CookBook> cookBookMap = director.getCookBookCollection().getCookBooks();
            CookBook cookBook = cookBookMap.get(cookBookName);
            if( cookBook == null)
                viewManager.messageViewer.printWrongBookMessage("there is no such book," +
@@ -148,7 +164,7 @@ public class UnfocusedExecution implements ExecutionStrategy {
                director.setFocusedObject(cookBook);
        }
        catch (IndexOutOfBoundsException e) {
-           viewManager.messageViewer.printWrongBookMessage("name of book was not given");
+           viewManager.messageViewer.printWrongBookMessage("name was not defined.");
        }
     }
 }

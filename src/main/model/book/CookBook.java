@@ -11,7 +11,7 @@ public class CookBook implements Serializable {
     private String cookBookName;
     private Map<String ,Recipe> recipes;
 
-    public CookBook(String cookBookName, Map<String, Recipe> recipes){
+    public CookBook(String cookBookName,Map<String, Recipe> recipes){
         this.cookBookName = cookBookName;
         if(recipes == null)
             throw new IllegalArgumentException("Map can not be a null");
@@ -22,12 +22,6 @@ public class CookBook implements Serializable {
         this(cookBookName, new HashMap<String, Recipe>());
     }
 
-    public CookBook(String cookBookName, List<Recipe> recipeList) throws DuplicateRecipeException {
-        this(cookBookName, new HashMap<String, Recipe>());
-        for(Recipe recipe: recipeList){
-            this.addRecipe(recipe);
-        }
-    }
 
     public void addRecipe(Recipe recipe) throws DuplicateRecipeException {
         if(recipes.get(recipe.getRecipeName()) != null)
@@ -67,16 +61,26 @@ public class CookBook implements Serializable {
         return tableOfContents;
     }
 
-    public void merge(CookBook other){
-        for(Map.Entry<String, Recipe> recipe : other.recipes.entrySet()){
-            Recipe tempRecipe = recipes.get(recipe.getKey());
+    public void merge(String cookBookName,CookBook other){
+        for(Recipe recipe : other.recipes.values()){
+            Recipe tempRecipe = recipes.get(recipe.getRecipeName());
             if(tempRecipe == null) // not in map
-                recipes.put(recipe.getKey(), recipe.getValue());
-            else if (!tempRecipe.equals(recipe.getValue())) // in map with same key but different value
-                recipes.put(other.toString() + "." + recipe.getKey(), recipe.getValue());
+                recipes.put(recipe.getRecipeName(), recipe);
+            else if (!tempRecipe.equals(recipe)){
+                tempRecipe.setRecipeName(this.cookBookName + "." + tempRecipe.getRecipeName());
+                recipe.setRecipeName(other.cookBookName + "." + recipe.getRecipeName());
+                recipes.put(recipe.getRecipeName(), recipe);
+            }
         }
     }
 
+    public String getCookBookName() {
+        return cookBookName;
+    }
+
+    public void setCookBookName(String cookBookName) {
+        this.cookBookName = cookBookName;
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -4,21 +4,20 @@ import main.controler.execution.*;
 import main.controler.parse.IParser;
 import main.controler.parse.SimpleParser;
 import main.model.book.CookBook;
+import main.model.collection.CookBookCollection;
 import main.model.recipe.Recipe;
 import main.model.recipe.RecipeIngredient;
-import main.view.MessageViewer;
 import main.view.ViewManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 public class Director {
     public final IParser parser;
-    private Map<String,CookBook> cookBooks;
+    private CookBookCollection cookBookCollection;
     private ExecutionStrategy executionStrategy;
     private Object focusedObject; // context of Execution Strategy/
     private ViewManager viewManager;
@@ -28,7 +27,7 @@ public class Director {
         focusedObject = null;
         viewManager = new ViewManager();
         executionStrategy = new UnfocusedExecution(this);
-        cookBooks = new HashMap<>();
+        cookBookCollection = new CookBookCollection();
     }
 
     public IParser getParser() {
@@ -47,12 +46,12 @@ public class Director {
         return viewManager;
     }
 
-    public Map<String, CookBook> getCookBooks() {
-        return cookBooks;
+    public CookBookCollection getCookBookCollection() {
+        return cookBookCollection;
     }
 
-    public void setCookBooks(Map<String, CookBook> cookBooks) {
-        this.cookBooks = cookBooks;
+    public void setCookBookCollection(CookBookCollection cookBookCollection) {
+        this.cookBookCollection = cookBookCollection;
     }
 
     public static void main(String[] args){

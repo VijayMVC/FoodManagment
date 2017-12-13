@@ -9,8 +9,10 @@ public class HelpViewer {
                 "\n - /showBooks" +
                 "\n - /newBook bookName" +
                 "\n - /selectBook BookName" +
-                "\n - /import filePath" +
+                "\n - /import filePath " +
                 "\n - /export filePath" +
+                "\n - /setCollectionName collectionName" +
+                "\n - /showCollectionName" +
                 "\n - /quit");
     }
 

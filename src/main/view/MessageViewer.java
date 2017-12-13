@@ -1,9 +1,14 @@
 package main.view;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 public class MessageViewer {
 
-    public void printEmptyCommandLineMessage() { }
+    public void printEmptyCommandLineMessage() {
+    }
 
     public void printContext(Object focusedObject) {
         String objectClass = "Console";
@@ -39,7 +44,14 @@ public class MessageViewer {
     }
 
     public void printCreatingBookErrorMessage(String message) {
-        System.out.println("Failed to create book, because " +message);
+        System.out.println("Failed to create book, because " + message);
     }
 
+    public void printPropertyErrorMessage(String property, String reason) {
+        System.out.println("Failed to set " + property + ", because " + reason);
+    }
+
+    public void printCollectionName(String collectionName) {
+        System.out.println("Collection name: " + collectionName);
+    }
 }

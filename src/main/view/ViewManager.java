@@ -11,4 +11,5 @@ public class ViewManager {
         helpViewer = new HelpViewer();
 
     }
+
 }

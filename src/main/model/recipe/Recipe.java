@@ -121,6 +121,10 @@ public class Recipe implements Serializable {
         return recipeName;
     }
 
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj == null)
