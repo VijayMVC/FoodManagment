@@ -8,6 +8,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Class represents Ingredient. It is Enum type because of safety. Adding new Ingredient is simple, just
+ * add new enum, specify three boolean values, that answers if the product is meat, nut or dairy product.
+ * These are important information for Vegetarians and allergy sufferers. Last value is the list of logically
+ * appropriate measure units.
+ */
 public enum Ingredient implements Serializable {
     Hazelnut(false, false, true, Arrays.asList(MassMeasureUnit.values())),
     ChickenBreast(true, false, false, Arrays.asList(MassMeasureUnit.values())),
@@ -26,6 +32,13 @@ public enum Ingredient implements Serializable {
     private boolean nut;
     private List<Enum> properMeasures;
 
+    /**
+     *
+     * @param Meat true if is meat, otherwise false
+     * @param dairyProduct true if is dairy product, otherwise false
+     * @param nut true if is nut, otherwise false
+     * @param properArguments List of proper measure units
+     */
     Ingredient(boolean Meat, boolean dairyProduct, boolean nut,
                 List<Enum> properArguments){
         this.meat=Meat;
@@ -33,27 +46,47 @@ public enum Ingredient implements Serializable {
         this.nut = nut;
         this.properMeasures = properArguments;
     }
+
+    /**
+     *
+     * @return true if is Meat, otherwise false
+     */
     public boolean isMeat() {
         return meat;
     }
 
+    /**
+     *
+     * @return true if is Dairy product
+     */
     public boolean isDairyProduct() {
         return dairyProduct;
     }
 
+    /**
+     *
+     * @return true if is Nut
+     */
     public boolean isNut() {
         return nut;
     }
 
+
     public String toString(){
-        return this.name().toLowerCase();
+        return this.name();
     }
 
-    public boolean isProperMeasureUnit(Object o){
-        if(!(o instanceof IMeasurable))
+    /**
+     * describes if given measure is proper measure of the enum value.
+     *
+     * @param measure measure to be checked
+     * @return
+     */
+    public boolean isProperMeasureUnit(Object measure){
+        if(!(measure instanceof IMeasurable))
             return false;
         for(Enum properMeasure : properMeasures ){
-            if(o.getClass().equals(properMeasure.getClass()))
+            if(measure.getClass().equals(properMeasure.getClass()))
                 return true;
         }
         return false;

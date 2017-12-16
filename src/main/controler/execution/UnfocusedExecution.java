@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class UnfocusedExecution implements ExecutionStrategy {
+public class UnfocusedExecution implements IExecutionStrategy {
     protected ViewManager viewManager;
     protected Director director;
 

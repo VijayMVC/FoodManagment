@@ -17,7 +17,7 @@ import main.model.units.VolumeMeasureUnit;
 import java.time.Duration;
 import java.util.List;
 
-public class RecipeExecution extends UnfocusedExecution implements ExecutionStrategy {
+public class RecipeExecution extends UnfocusedExecution implements IExecutionStrategy {
     public RecipeExecution(Director director) {
         super(director);
     }
@@ -67,12 +67,46 @@ public class RecipeExecution extends UnfocusedExecution implements ExecutionStra
                 setTip(commandLine);
                 break;
             }
+            case "selectIngredient":{
+                selectIngredient(commandLine);
+                break;
+            }
+            case "return":{
+                returnToCookBook();
+                break;
+            }
+            case "showMeasures":{
+                viewManager.dataViewer.showMeasures();
+                break;
+            }
+            case "showIngredients":{
+                viewManager.dataViewer.showIngredients();
+                break;
+            }
             default :{
                 viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
                         " available commands");
             }
 
         }
+    }
+
+    private void selectIngredient(List<String> commandLine) {
+        try{
+            Recipe recipe = (Recipe) director.getFocusedObject();
+            int index = Integer.valueOf(commandLine.get(1));
+            director.setFocusedObject(recipe.getRecipeIngredientList().get(index-1));
+        }catch(IndexOutOfBoundsException e ){
+            viewManager.messageViewer.printErrorMessage("Failed to select Ingredient, Ingredient with that index does not exist");
+        }catch(NumberFormatException e ){
+            viewManager.messageViewer.printErrorMessage("Failed to select Ingredient, because quantity is not a number.");
+        } catch( IllegalArgumentException e) {
+            viewManager.messageViewer.printErrorMessage("Failed to select Ingredient, check if you wrote proper arguments.");
+        }
+    }
+
+    private void returnToCookBook() {
+        director.setFocusedObject(director.getParentObject());
     }
 
     private void setTip(List<String> commandLine) {
@@ -116,7 +150,7 @@ public class RecipeExecution extends UnfocusedExecution implements ExecutionStra
     private void removeIngredient(List<String> commandLine) {
         try {
             Recipe recipe = (Recipe) director.getFocusedObject();
-            recipe.removeIngredient(Integer.valueOf(commandLine.get(1)));
+            recipe.removeIngredient(Integer.valueOf(commandLine.get(1))-1);
         } catch (IndexOutOfBoundsException e) {
             viewManager.messageViewer.printErrorMessage("Failed to remove Ingredient, because proper index was not defined.");
         } catch(NumberFormatException e ){
@@ -156,7 +190,7 @@ public class RecipeExecution extends UnfocusedExecution implements ExecutionStra
     private void removeDirection(List<String> commandLine) {
         try {
             Recipe recipe = (Recipe) director.getFocusedObject();
-            recipe.removeDirection(Integer.valueOf(commandLine.get(1)));
+            recipe.removeDirection(Integer.valueOf(commandLine.get(1))-1);
         } catch (IndexOutOfBoundsException e) {
             viewManager.messageViewer.printErrorMessage("Failed to remove Direction, because proper index was not defined.");
         } catch(NumberFormatException e ){
@@ -178,7 +212,7 @@ public class RecipeExecution extends UnfocusedExecution implements ExecutionStra
     private void setRecipeName(List<String> commandLine) {
         try {
             String oldName = ((Recipe) director.getFocusedObject()).getRecipeName();
-            CookBook cookBook = (CookBook) director.getLastFocusedObject();
+            CookBook cookBook = (CookBook) director.getParentObject();
             cookBook.renameRecipe(oldName,commandLine.get(1));
         } catch (IndexOutOfBoundsException e) {
             viewManager.messageViewer.printErrorMessage("Failed to set recipeName , because name was not defined.");

@@ -16,27 +16,21 @@ import java.util.List;
 
 
 public class Director {
-    public final IParser parser;
+    private final IParser parser;
     private CookBookCollection cookBookCollection;
-    private ExecutionStrategy executionStrategy;
-    private Object focusedObject; // context of Execution Strategy/
-    private Object lastFocusedObject;
     private ViewManager viewManager;
+
+    private IExecutionStrategy IExecutionStrategy;
+    private Object focusedObject; // context of Execution Strategy/
+    private Object parentObject;
+    private CookBook lastFocusedCookBook;
 
     public Director(IParser parser) {
         this.parser = parser;
         focusedObject = null;
         viewManager = new ViewManager();
-        executionStrategy = new UnfocusedExecution(this);
+        IExecutionStrategy = new UnfocusedExecution(this);
         cookBookCollection = new CookBookCollection();
-    }
-
-    public IParser getParser() {
-        return parser;
-    }
-
-    public  ExecutionStrategy getExecutionStrategy() {
-        return executionStrategy;
     }
 
     public Object getFocusedObject(){
@@ -51,9 +45,27 @@ public class Director {
         return cookBookCollection;
     }
 
-    public Object getLastFocusedObject() {
-        return lastFocusedObject;
+    public Object getParentObject() {
+        return parentObject;
     }
+
+    public void setFocusedObject(Object focusedObject) {
+        this.parentObject = this.focusedObject;
+        this.focusedObject = focusedObject;
+        if(focusedObject instanceof CookBook) {
+            IExecutionStrategy = new CookBookExecution(this);
+            this.lastFocusedCookBook = (CookBook) focusedObject;
+        }else if (focusedObject instanceof Recipe){
+            IExecutionStrategy = new RecipeExecution(this);
+            if(! (parentObject instanceof CookBook))
+                parentObject = this.lastFocusedCookBook;
+        }
+        else if(focusedObject instanceof RecipeIngredient)
+            IExecutionStrategy = new RecipeIngredientExecution(this);
+        else
+            IExecutionStrategy = new UnfocusedExecution(this);
+    }
+
 
     public static void main(String[] args){
         Director director = new Director(new SimpleParser());
@@ -65,7 +77,7 @@ public class Director {
                 if(line.equals("quit") || line.equals("q") || line.equals("/q") || line.equals("/quit"))
                     return;
                 else {
-                    director.getExecutionStrategy().execute(lines);
+                    director.getIExecutionStrategy().execute(lines);
                 }
             }
         }
@@ -74,16 +86,11 @@ public class Director {
         }
     }
 
-    public void setFocusedObject(Object focusedObject) {
-        this.lastFocusedObject = this.focusedObject;
-        this.focusedObject = focusedObject;
-        if(focusedObject instanceof CookBook)
-            executionStrategy = new CookBookExecution(this);
-        else if (focusedObject instanceof Recipe)
-            executionStrategy = new RecipeExecution(this);
-        else if(focusedObject instanceof RecipeIngredient)
-            executionStrategy = new RecipeIngredientExecution(this);
-        else
-            executionStrategy = new UnfocusedExecution(this);
+    private IParser getParser() {
+        return parser;
+    }
+
+    private IExecutionStrategy getIExecutionStrategy() {
+        return IExecutionStrategy;
     }
 }

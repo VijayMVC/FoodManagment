@@ -6,13 +6,10 @@ import main.model.book.DuplicateRecipeException;
 import main.model.collection.CookBookNotFoundException;
 import main.model.collection.DuplicateCookBookException;
 import main.model.recipe.Recipe;
-import main.view.MessageViewer;
-import main.view.ViewManager;
 
 import java.util.List;
-import java.util.Map;
 
-public class CookBookExecution extends UnfocusedExecution implements ExecutionStrategy {
+public class CookBookExecution extends UnfocusedExecution implements IExecutionStrategy {
     public CookBookExecution(Director director) {
         super(director);
     }

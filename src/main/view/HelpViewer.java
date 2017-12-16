@@ -36,12 +36,18 @@ public class HelpViewer {
                 "\n - removeDirection index" +
                 "\n - addIngredient quantity measure ingredient" +
                 "\n - removeIngredient index" +
+                "\n - selectIngredient index" +
                 "\n - setPreparationTime hours minutes (int)" +
-                "\n - setCookingTime hours minutes (int)");
+                "\n - setCookingTime hours minutes (int)" +
+                "\n - showIngredients" +
+                "\n - showMeasures" +
+                "\n - return" );
     }
 
     public void printRecipeIngredientHelp() {
         System.out.println("Available context functions: " +
-                "\n - setRecipeName");
+                "\n - setQuantity quantity" +
+                "\n - convertTo measure" +
+                "\n - return" );
     }
 }

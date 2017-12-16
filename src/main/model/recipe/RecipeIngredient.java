@@ -2,15 +2,27 @@ package main.model.recipe;
 
 import main.model.food.Ingredient;
 import main.model.units.IMeasurable;
-import main.model.units.NotConvertableException;
+import main.model.units.NotConvertibleException;
 
 import java.io.Serializable;
 
+/**
+ *  Class represents part of Recipe which is aggregate of three variables Ingredient unit of measure
+ *  and quantity in this measure.
+ */
 public class RecipeIngredient implements Serializable {
     private Ingredient ingredient;
     private IMeasurable measurable;
     private double quantity;
 
+    /**
+     *
+     * @param ingredient enum value representing ingredient
+     * @param measurable proper unit of ingredient measure
+     * @param quantity quantity in measurable unit
+     * @throws IllegalQuantityValueException quantity is inappropriate
+     * @throws IllegalMeasureArgumentException measurable and ingredient do not match
+     */
     public RecipeIngredient(Ingredient ingredient, IMeasurable measurable, double quantity)
             throws IllegalQuantityValueException, IllegalMeasureArgumentException {
         setQuantity(quantity);
@@ -25,6 +37,11 @@ public class RecipeIngredient implements Serializable {
         this(ingredient, measurable, 1);
     }
 
+    /**
+     *
+     * @param quantity new quantity
+     * @throws IllegalQuantityValueException
+     */
     public void setQuantity(double quantity) throws IllegalQuantityValueException {
         if(quantity <= 0)
             throw new IllegalQuantityValueException();
@@ -36,6 +53,12 @@ public class RecipeIngredient implements Serializable {
         return Double.toString(quantity) + " " + measurable.toString() + " " + ingredient.toString();
     }
 
+    /**
+     * toString which tries to convert representation of fraction from "0.5" to 1/2 etc.
+     *
+     * @param tryToSimplifyFractions true if should be simplified, false corresponds to normal toString
+     * @return
+     */
     public String toString(boolean tryToSimplifyFractions){
         if(tryToSimplifyFractions){
             String quant = GetSimpleFractionOfQuantity();
@@ -50,12 +73,43 @@ public class RecipeIngredient implements Serializable {
         return ingredient;
     }
 
-    public void convertToMeasureUnit(IMeasurable measurable) throws NotConvertableException {
+    /**
+     * convert to new measure, rescaling quantity
+     *
+     * @param measurable new measure to convert to
+     * @throws NotConvertibleException not corresponding measure and ingredient
+     */
+    public void convertToMeasureUnit(IMeasurable measurable) throws NotConvertibleException {
         double fraction = this.measurable.getValueIn(measurable);
         quantity *= fraction;
         this.measurable = measurable;
     }
 
+    /**
+     * Two RecipeIngredients are equal when they have same ingredients same quantity in basic unit
+     * with precision to epsilon which is hard set to value od 1e-4.
+     *
+     * @param obj compared object
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        final double epsilon = 0.0001;
+        if(obj == null)
+            return false;
+        if(!(obj instanceof RecipeIngredient))
+            return false;
+        return (this.ingredient == ((RecipeIngredient) obj).ingredient) &&
+                (Math.abs(this.measurable.getFractionOfBasicUnit() * this.quantity -
+                (((RecipeIngredient) obj).measurable).getFractionOfBasicUnit() * ((RecipeIngredient) obj).quantity) < epsilon);
+
+    }
+
+    /**
+     * tries to simplify quantity e.g. to form "1/2" from double 0.5
+     *
+     * @return String with simplified fraction or "" if could not be simplified
+     */
     private String GetSimpleFractionOfQuantity(){
         final double E = 0.0001;
         final double n = 64;
@@ -75,4 +129,5 @@ public class RecipeIngredient implements Serializable {
         }
         return "";
     }
+
 }

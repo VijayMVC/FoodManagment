@@ -1,5 +1,8 @@
 package main.model.collection;
 
+/**
+ * Thrown when harassing rule: Merging same named Collection can make some unwanted errors, it is forbidden.
+ */
 public class MergeSameNamedCollectionsException extends Throwable {
     public MergeSameNamedCollectionsException() {
         super(" current cookBookCollection name and name of" +

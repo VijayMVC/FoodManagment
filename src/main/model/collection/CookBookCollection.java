@@ -9,10 +9,25 @@ import java.util.Map;
 /*
  * https://www.tutorialspoint.com/java/java_serialization.htm
  */
+
+/**
+ * Class represents Collection of CookBooks and provide functionality to save cookbooks to file and import
+ * them. It also give access to cook books contained in it by map instance.
+ */
 public class CookBookCollection implements Serializable {
 
     private Map<String,CookBook> cookBooks;
     private String collectionName;
+
+    /**
+     *
+     * @param collectionName
+     * @param cookBooks - instance of Map containing cook books where the key is cook book name
+     */
+    public CookBookCollection(String collectionName, Map<String,CookBook> cookBooks) {
+        this.cookBooks = cookBooks;
+        this.collectionName = collectionName;
+    }
 
     public CookBookCollection() {
         this("unnamed", new HashMap<>());
@@ -22,16 +37,18 @@ public class CookBookCollection implements Serializable {
         this("unnamed", cookBooks);
     }
 
-
     public CookBookCollection(String collectionName) {
         this(collectionName, new HashMap<>());
     }
 
-    public CookBookCollection(String collectionName, Map<String,CookBook> cookBooks) {
-        this.cookBooks = cookBooks;
-        this.collectionName = collectionName;
-    }
 
+    /**
+     * Save the object to file.
+     *
+     * @param outputFilePath path to destination along with file name where should the file be created
+     * @throws IOException
+     * @throws UnnamedCollectionException
+     */
     public void serialize(String outputFilePath) throws IOException, UnnamedCollectionException {
         if(this.collectionName.equals("unnamed"))
             throw new UnnamedCollectionException();
@@ -43,6 +60,14 @@ public class CookBookCollection implements Serializable {
         fileOut.close();
     }
 
+    /**
+     * import data from file
+     *
+     * @param inputFilePath path to saved object file
+     * @return Cook book previously serialized to file
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
     public static CookBookCollection deserialize(String inputFilePath)
             throws ClassNotFoundException, IOException {
         FileInputStream fileIn = new FileInputStream(inputFilePath);
@@ -54,10 +79,25 @@ public class CookBookCollection implements Serializable {
     }
 
 
+
     public Map<String, CookBook> getCookBooks() {
         return cookBooks;
     }
 
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
+    }
+
+    /**
+     * merge other collection to collection from the method was invoked.
+     *
+     * @param other collection which from components are taken
+     * @throws MergeSameNamedCollectionsException
+     */
     public void merge(CookBookCollection other) throws MergeSameNamedCollectionsException {
         if(this.collectionName.equals(other.collectionName))
             throw new MergeSameNamedCollectionsException();
@@ -75,14 +115,13 @@ public class CookBookCollection implements Serializable {
         }
     }
 
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
-    }
-
+    /**
+     *
+     * @param oldName old cook book name
+     * @param newName new cook book name
+     * @throws CookBookNotFoundException
+     * @throws DuplicateCookBookException
+     */
     public void renameCookBook(String oldName, String newName) throws CookBookNotFoundException, DuplicateCookBookException {
         CookBook cookBook = cookBooks.get(oldName);
         if(cookBook == null)
