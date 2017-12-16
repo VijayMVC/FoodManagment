@@ -32,6 +32,9 @@ public class CookBook implements Serializable {
         this(cookBookName, new HashMap<>());
     }
 
+
+
+
     /**
      *
      * @param recipe recipe to add
@@ -49,6 +52,25 @@ public class CookBook implements Serializable {
      */
     public void removeRecipe(String recipeName){
         recipes.remove(recipeName);
+    }
+
+    /**
+     * rename recipe contained in Cook Book
+     *
+     * @param oldName old name of recipe
+     * @param newName new name of recipe
+     * @throws RecipeNotFoundException
+     * @throws DuplicateRecipeException
+     */
+    public void renameRecipe(String oldName, String newName) throws RecipeNotFoundException, DuplicateRecipeException {
+        Recipe recipe = recipes.get(oldName);
+        if(recipe == null)
+            throw new RecipeNotFoundException();
+        if(recipes.get(newName)!=null)
+            throw new DuplicateRecipeException();
+        recipes.remove(oldName);
+        recipe.setRecipeName(newName);
+        recipes.put(newName,recipe);
     }
 
     /**
@@ -102,6 +124,8 @@ public class CookBook implements Serializable {
     }
 
 
+
+
     public Recipe getRecipe(String recipeName){
         return recipes.get(recipeName);
     }
@@ -115,10 +139,13 @@ public class CookBook implements Serializable {
     }
 
     public List<String> getTableOfContents(){
-        List<String> tableOfContents = new ArrayList<String>(recipes.keySet());
+        List<String> tableOfContents = new ArrayList<>(recipes.keySet());
         Collections.sort(tableOfContents, String::compareTo);
         return tableOfContents;
     }
+
+
+
 
     /**
      * describes if two objects are equals. Two CookBooks are considered equals if and only if they have
@@ -149,22 +176,4 @@ public class CookBook implements Serializable {
         return cookBookName;
     }
 
-    /**
-     * rename recipe contained in Cook Book
-     *
-     * @param oldName old name of recipe
-     * @param newName new name of recipe
-     * @throws RecipeNotFoundException
-     * @throws DuplicateRecipeException
-     */
-    public void renameRecipe(String oldName, String newName) throws RecipeNotFoundException, DuplicateRecipeException {
-        Recipe recipe = recipes.get(oldName);
-        if(recipe == null)
-            throw new RecipeNotFoundException();
-        if(recipes.get(newName)!=null)
-            throw new DuplicateRecipeException();
-        recipes.remove(oldName);
-        recipe.setRecipeName(newName);
-        recipes.put(newName,recipe);
-    }
 }

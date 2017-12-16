@@ -28,30 +28,28 @@ class CookBookCollectionTest {
     }
 
     @Test
-    void merge() throws MergeSameNamedCollectionsException {
+    void merge() throws MergeSameNamedCollectionsException, DuplicateCookBookException, CookBookNotFoundException {
         CookBookCollection collection = new CookBookCollection();
         CookBookCollection collection2 = new CookBookCollection("ala123");
         CookBook testCookBook = new CookBook("dinners");
-        collection2.getCookBooks().put(testCookBook.getCookBookName(),testCookBook);
+        collection2.addCookBook(testCookBook);
         CookBookCollection collection3 = new CookBookCollection("ala123");
         assertThrows(MergeSameNamedCollectionsException.class , ()-> collection2.merge(collection3));
         collection.merge(collection2);
-        assertFalse(collection.getCookBooks().isEmpty());
-        assertEquals(collection.getCookBooks().get("dinners"),testCookBook );
-
+        assertEquals(collection.getCookBook("dinners"),testCookBook );
     }
 
     @Test
     void renameCookBook() throws CookBookNotFoundException, DuplicateCookBookException {
         CookBookCollection collection2 = new CookBookCollection("ala123");
         CookBook testCookBook = new CookBook("dinners");
-        collection2.getCookBooks().put(testCookBook.getCookBookName(),testCookBook);
+        collection2.addCookBook(testCookBook);
         CookBook testCookBook2 = new CookBook("suppers");
-        collection2.getCookBooks().put(testCookBook2.getCookBookName(),testCookBook2);
+        collection2.addCookBook(testCookBook2);
         assertThrows(DuplicateCookBookException.class, ()->collection2.renameCookBook("dinners","suppers"));
         assertThrows(CookBookNotFoundException.class, ()->collection2.renameCookBook("dinnerss","suppers"));
         collection2.renameCookBook("dinners", "breakfast");
-        assertEquals(collection2.getCookBooks().get("breakfast"), testCookBook);
+        assertEquals(collection2.getCookBook("breakfast"), testCookBook);
     }
 
 }

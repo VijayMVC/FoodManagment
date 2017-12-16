@@ -2,9 +2,7 @@ package main.controler.execution;
 
 import main.controler.Director;
 import main.model.book.CookBook;
-import main.model.collection.CookBookCollection;
-import main.model.collection.MergeSameNamedCollectionsException;
-import main.model.collection.UnnamedCollectionException;
+import main.model.collection.*;
 import main.view.ViewManager;
 
 import java.io.EOFException;
@@ -43,6 +41,7 @@ public class UnfocusedExecution implements IExecutionStrategy {
         switch(commandLine.get(0)){
             case "/help":{
                 viewManager.helpViewer.printHelp();
+                showHelp();
                 break;
             }
             case "/context":{
@@ -50,7 +49,7 @@ public class UnfocusedExecution implements IExecutionStrategy {
                 break;
             }
             case "/showBooks":{
-                viewManager.dataViewer.showBooks(director.getCookBookCollection().getCookBooks());
+                viewManager.dataViewer.showBooks(director.getCookBookCollection().getTableOfContents());
                 break;
             }
             case "/selectBook":{
@@ -77,11 +76,41 @@ public class UnfocusedExecution implements IExecutionStrategy {
                 viewManager.messageViewer.printMessage("Collection name:" + director.getCookBookCollection().getCollectionName());
                 break;
             }
+            case "/unfocus":{
+                director.setFocusedObject(null);
+                break;
+            }
             default:{
                 viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
                         " available commands");
                 break;
             }
+        }
+    }
+
+
+    protected void showHelp() {
+        viewManager.helpViewer.printUnfocusedHelp();
+    }
+
+    protected void executeContextCommand(List<String> commandLine) {
+        switch (commandLine.get(0)) {
+            case "removeCookBook": {
+                removeCookBook(commandLine);
+                break;
+            }
+            default:{
+                viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
+                        " available commands");
+            }
+        }
+    }
+
+    private void removeCookBook(List<String> commandLine) {
+        try{
+            director.getCookBookCollection().removeCookBook(commandLine.get(1));
+        }catch(IndexOutOfBoundsException e){
+            viewManager.messageViewer.printErrorMessage("Failed to remove book because name was not provided.");
         }
     }
 
@@ -94,21 +123,15 @@ public class UnfocusedExecution implements IExecutionStrategy {
         }
     }
 
-    protected void executeContextCommand(List<String> commandLine){viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
-            " available commands"); }
-
     private void createNewBook(List<String> commandLine) {
         try {
             String name = commandLine.get(1);
-            if(director.getCookBookCollection().getCookBooks().get(name) != null) {
-                viewManager.messageViewer.printErrorMessage("Failed to create book, book with that name already exists.");
-            }
-            else{
-                director.getCookBookCollection().getCookBooks().put(name, new CookBook(name));
-            }
+            director.getCookBookCollection().addCookBook(new CookBook(name));
         }
         catch(IndexOutOfBoundsException e) {
             viewManager.messageViewer.printErrorMessage("Failed to create book, name was not defined.");
+        } catch (DuplicateCookBookException e) {
+            viewManager.messageViewer.printErrorMessage("Failed to create book, book with that name already exists.");
         }
     }
 
@@ -164,18 +187,16 @@ public class UnfocusedExecution implements IExecutionStrategy {
     private void selectBook(List<String> commandLine){
        try {
            String cookBookName = commandLine.get(1);
-           Map<String,CookBook> cookBookMap = director.getCookBookCollection().getCookBooks();
-           CookBook cookBook = cookBookMap.get(cookBookName);
-           if( cookBook == null)
-               viewManager.messageViewer.printErrorMessage(" Fail to select Book because " +
-                       " there is no such book," +
-                       " check if you spelled name properly");
-           else
-               director.setFocusedObject(cookBook);
+           CookBook cookBook = director.getCookBookCollection().getCookBook(cookBookName);
+           director.setFocusedObject(cookBook);
        }
        catch (IndexOutOfBoundsException e) {
-           viewManager.messageViewer.printErrorMessage("Fail to select Book because " +
+           viewManager.messageViewer.printErrorMessage("Failed to select Book because " +
                    "name was not defined.");
+       } catch (CookBookNotFoundException e) {
+           viewManager.messageViewer.printErrorMessage(" Failed to select Book because " +
+                   " there is no such book," +
+                   " check if you spelled name properly");
        }
     }
 }

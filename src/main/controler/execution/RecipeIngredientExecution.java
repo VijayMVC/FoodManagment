@@ -13,12 +13,11 @@ public class RecipeIngredientExecution extends UnfocusedExecution implements IEx
     }
 
     @Override
-    public void execute(List<String> commandLine) {
-        super.execute(commandLine);
-        if (!commandLine.isEmpty() && commandLine.get(0).equals("/help"))
-            viewManager.helpViewer.printRecipeIngredientHelp();
+    protected void showHelp(){
+        viewManager.helpViewer.printRecipeIngredientHelp();
     }
 
+    @Override
     protected void executeContextCommand(List<String> commandLine) {
         switch (commandLine.get(0)) {
             case "convertTo":{

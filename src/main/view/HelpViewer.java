@@ -13,6 +13,7 @@ public class HelpViewer {
                 "\n - /export filePath" +
                 "\n - /setCollectionName collectionName" +
                 "\n - /showCollectionName" +
+                "\n - /unfocus" +
                 "\n - /quit");
     }
 
@@ -25,20 +26,23 @@ public class HelpViewer {
                 "\n - selectRecipe" +
                 "\n - showVegetarianMeals" +
                 "\n - showNutFreeMeals" +
-                "\n - showLactoseFreeMeals");
+                "\n - showLactoseFreeMeals" +
+                "\n - showIngredients" +
+                "\n - showRecipesDoableWith [Ingredients]");
     }
 
     public void printRecipeHelp() {
         System.out.println("Available context functions: " +
                 "\n - setRecipeName" +
-                "\n - addDirection [Direction]" +
                 "\n - showRecipe" +
+                "\n - addDirection [Direction]" +
                 "\n - removeDirection index" +
                 "\n - addIngredient quantity measure ingredient" +
                 "\n - removeIngredient index" +
                 "\n - selectIngredient index" +
                 "\n - setPreparationTime hours minutes (int)" +
                 "\n - setCookingTime hours minutes (int)" +
+                "\n - setTip [Tip]" +
                 "\n - showIngredients" +
                 "\n - showMeasures" +
                 "\n - return" );
@@ -49,5 +53,10 @@ public class HelpViewer {
                 "\n - setQuantity quantity" +
                 "\n - convertTo measure" +
                 "\n - return" );
+    }
+
+    public void printUnfocusedHelp() {
+        System.out.println("Available context functions: " +
+                "\n - removeCookBook");
     }
 }

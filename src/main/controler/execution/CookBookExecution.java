@@ -5,8 +5,10 @@ import main.model.book.CookBook;
 import main.model.book.DuplicateRecipeException;
 import main.model.collection.CookBookNotFoundException;
 import main.model.collection.DuplicateCookBookException;
+import main.model.food.Ingredient;
 import main.model.recipe.Recipe;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CookBookExecution extends UnfocusedExecution implements IExecutionStrategy {
@@ -15,12 +17,9 @@ public class CookBookExecution extends UnfocusedExecution implements IExecutionS
     }
 
     @Override
-    public void execute(List<String> commandLine) {
-        super.execute(commandLine);
-        if (!commandLine.isEmpty() && commandLine.get(0).equals("/help"))
-            viewManager.helpViewer.printCookBookHelp();
+    protected void showHelp(){
+        viewManager.helpViewer.printCookBookHelp();
     }
-
 
     @Override
     protected void executeContextCommand(List<String> commandLine) {
@@ -57,11 +56,35 @@ public class CookBookExecution extends UnfocusedExecution implements IExecutionS
                 showLactoseFreeMeals();
                 break;
             }
+            case "showIngredients":{
+                viewManager.dataViewer.showIngredients();
+                break;
+            }
+            case "showRecipesDoableWith":{
+                showRecipesDoableWith(commandLine);
+                break;
+            }
             default :{
                 viewManager.messageViewer.printErrorMessage("Wrong command use /help to get" +
                         " available commands");
             }
 
+        }
+    }
+
+    private void showRecipesDoableWith(List<String> commandLine) {
+        try {
+            commandLine.remove(0);
+            List<Ingredient> ingredientList = new ArrayList<>();
+            for (String str : commandLine) {
+                ingredientList.add(Ingredient.valueOf(str));
+            }
+            CookBook temp = new CookBook("Doable Recipes",
+                    ((CookBook)director.getFocusedObject()).getRecipes(ingredientList));
+            viewManager.dataViewer.showTableOfContents(temp);
+
+        } catch (IllegalArgumentException e) {
+            viewManager.messageViewer.printErrorMessage("Failed to recognize Ingredient, check if you wrote proper arguments.");
         }
     }
 

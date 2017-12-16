@@ -37,6 +37,22 @@ public class RecipeIngredient implements Serializable {
         this(ingredient, measurable, 1);
     }
 
+
+
+    /**
+     * convert to new measure, rescaling quantity
+     *
+     * @param measurable new measure to convert to
+     * @throws NotConvertibleException not corresponding measure and ingredient
+     */
+    public void convertToMeasureUnit(IMeasurable measurable) throws NotConvertibleException {
+        double fraction = this.measurable.getValueIn(measurable);
+        quantity *= fraction;
+        this.measurable = measurable;
+    }
+
+
+
     /**
      *
      * @param quantity new quantity
@@ -47,6 +63,12 @@ public class RecipeIngredient implements Serializable {
             throw new IllegalQuantityValueException();
         this.quantity = quantity;
     }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
+
 
     @Override
     public String toString(){
@@ -69,22 +91,6 @@ public class RecipeIngredient implements Serializable {
         return this.toString();
     }
 
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
-
-    /**
-     * convert to new measure, rescaling quantity
-     *
-     * @param measurable new measure to convert to
-     * @throws NotConvertibleException not corresponding measure and ingredient
-     */
-    public void convertToMeasureUnit(IMeasurable measurable) throws NotConvertibleException {
-        double fraction = this.measurable.getValueIn(measurable);
-        quantity *= fraction;
-        this.measurable = measurable;
-    }
-
     /**
      * Two RecipeIngredients are equal when they have same ingredients same quantity in basic unit
      * with precision to epsilon which is hard set to value od 1e-4.
@@ -104,6 +110,8 @@ public class RecipeIngredient implements Serializable {
                 (((RecipeIngredient) obj).measurable).getFractionOfBasicUnit() * ((RecipeIngredient) obj).quantity) < epsilon);
 
     }
+
+
 
     /**
      * tries to simplify quantity e.g. to form "1/2" from double 0.5

@@ -53,6 +53,8 @@ public class Recipe implements Serializable {
                 null, null, null);
     }
 
+
+
     /**
      *
      * @param recipeIngredient ingredient to add
@@ -142,6 +144,7 @@ public class Recipe implements Serializable {
     }
 
 
+
     /**
      *
      * @param cookingTime new cooking time
@@ -174,8 +177,6 @@ public class Recipe implements Serializable {
     public void setTip(String tip){
         this.tip = tip;
     }
-
-
 
     public String getRecipeName() {
         return recipeName;
@@ -231,6 +232,7 @@ public class Recipe implements Serializable {
         }
         return true;
     }
+
 
 
     /**

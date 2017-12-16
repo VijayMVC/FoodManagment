@@ -3,8 +3,7 @@ package main.model.collection;
 import main.model.book.CookBook;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /*
  * https://www.tutorialspoint.com/java/java_serialization.htm
@@ -40,6 +39,57 @@ public class CookBookCollection implements Serializable {
     public CookBookCollection(String collectionName) {
         this(collectionName, new HashMap<>());
     }
+
+
+
+
+    /**
+     *
+     * @param cookBook cook book to add
+     * @throws DuplicateCookBookException cook book with that name already exists
+     */
+    public void addCookBook(CookBook cookBook) throws DuplicateCookBookException {
+        if(cookBooks.get(cookBook.getCookBookName())!=null)
+            throw new DuplicateCookBookException();
+        else cookBooks.put(cookBook.getCookBookName(),cookBook);
+    }
+
+    /**
+     *
+     * @param cookBookName
+     * @return cook book with given cook book name
+     * @throws CookBookNotFoundException thrown where there is no such book in collection
+     */
+    public CookBook getCookBook(String cookBookName) throws CookBookNotFoundException {
+        CookBook cookBook = cookBooks.get(cookBookName);
+        if(cookBook == null)
+            throw new CookBookNotFoundException();
+        else
+            return cookBook;
+    }
+
+    public void removeCookBook(String cookBookName){
+        cookBooks.remove(cookBookName);
+    }
+
+    /**
+     *
+     * @param oldName old cook book name
+     * @param newName new cook book name
+     * @throws CookBookNotFoundException
+     * @throws DuplicateCookBookException
+     */
+    public void renameCookBook(String oldName, String newName) throws CookBookNotFoundException, DuplicateCookBookException {
+        CookBook cookBook = cookBooks.get(oldName);
+        if(cookBook == null)
+            throw new CookBookNotFoundException();
+        if(cookBooks.get(newName)!=null)
+            throw new DuplicateCookBookException();
+        cookBooks.remove(oldName);
+        cookBook.setCookBookName(newName);
+        cookBooks.put(newName,cookBook);
+    }
+
 
 
     /**
@@ -80,8 +130,11 @@ public class CookBookCollection implements Serializable {
 
 
 
-    public Map<String, CookBook> getCookBooks() {
-        return cookBooks;
+
+    public List<String> getTableOfContents(){
+        List<String> tableOfContents = new ArrayList<>(cookBooks.keySet());
+        Collections.sort(tableOfContents, String::compareTo);
+        return tableOfContents;
     }
 
     public String getCollectionName() {
@@ -101,7 +154,7 @@ public class CookBookCollection implements Serializable {
     public void merge(CookBookCollection other) throws MergeSameNamedCollectionsException {
         if(this.collectionName.equals(other.collectionName))
             throw new MergeSameNamedCollectionsException();
-        for(CookBook cookBook : other.getCookBooks().values()){
+        for(CookBook cookBook : other.cookBooks.values()){
             CookBook temp = cookBooks.get(cookBook.getCookBookName());
             if( temp == null)
                 cookBooks.put(cookBook.getCookBookName(), cookBook);
@@ -115,21 +168,6 @@ public class CookBookCollection implements Serializable {
         }
     }
 
-    /**
-     *
-     * @param oldName old cook book name
-     * @param newName new cook book name
-     * @throws CookBookNotFoundException
-     * @throws DuplicateCookBookException
-     */
-    public void renameCookBook(String oldName, String newName) throws CookBookNotFoundException, DuplicateCookBookException {
-        CookBook cookBook = cookBooks.get(oldName);
-        if(cookBook == null)
-            throw new CookBookNotFoundException();
-        if(cookBooks.get(newName)!=null)
-            throw new DuplicateCookBookException();
-        cookBooks.remove(oldName);
-        cookBook.setCookBookName(newName);
-        cookBooks.put(newName,cookBook);
-    }
+
+
 }

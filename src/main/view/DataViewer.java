@@ -13,14 +13,14 @@ import java.util.Map;
 
 public class DataViewer {
 
-    public void showBooks(Map<String, CookBook> cookBooks) {
+    public void showBooks(List<String> cookBooks) {
         int i=1;
         if (cookBooks.isEmpty())
             System.out.println("There are no available books");
         else {
             System.out.println("Available books:");
-            for (CookBook cookBook : cookBooks.values())
-                System.out.println(((Integer) i).toString() + ". " + cookBook.toString());
+            for (String cookBookName : cookBooks)
+                System.out.println(((Integer) i).toString() + ". " + cookBookName);
             i++;
         }
     }

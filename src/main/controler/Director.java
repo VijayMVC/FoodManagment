@@ -20,7 +20,7 @@ public class Director {
     private CookBookCollection cookBookCollection;
     private ViewManager viewManager;
 
-    private IExecutionStrategy IExecutionStrategy;
+    private IExecutionStrategy executionStrategy;
     private Object focusedObject; // context of Execution Strategy/
     private Object parentObject;
     private CookBook lastFocusedCookBook;
@@ -29,7 +29,7 @@ public class Director {
         this.parser = parser;
         focusedObject = null;
         viewManager = new ViewManager();
-        IExecutionStrategy = new UnfocusedExecution(this);
+        executionStrategy = new UnfocusedExecution(this);
         cookBookCollection = new CookBookCollection();
     }
 
@@ -52,18 +52,19 @@ public class Director {
     public void setFocusedObject(Object focusedObject) {
         this.parentObject = this.focusedObject;
         this.focusedObject = focusedObject;
-        if(focusedObject instanceof CookBook) {
-            IExecutionStrategy = new CookBookExecution(this);
+        if(focusedObject == null){
+            executionStrategy = new UnfocusedExecution(this);
+        }
+        else if(focusedObject instanceof CookBook) {
+            executionStrategy = new CookBookExecution(this);
             this.lastFocusedCookBook = (CookBook) focusedObject;
         }else if (focusedObject instanceof Recipe){
-            IExecutionStrategy = new RecipeExecution(this);
+            executionStrategy = new RecipeExecution(this);
             if(! (parentObject instanceof CookBook))
                 parentObject = this.lastFocusedCookBook;
         }
-        else if(focusedObject instanceof RecipeIngredient)
-            IExecutionStrategy = new RecipeIngredientExecution(this);
-        else
-            IExecutionStrategy = new UnfocusedExecution(this);
+        else if (focusedObject instanceof RecipeIngredient)
+            executionStrategy = new RecipeIngredientExecution(this);
     }
 
 
@@ -73,24 +74,16 @@ public class Director {
         try(BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
             while (true) {
                 String line = br.readLine();
-                List<String> lines = director.getParser().parse(line);
+                List<String> lines = director.parser.parse(line);
                 if(line.equals("quit") || line.equals("q") || line.equals("/q") || line.equals("/quit"))
                     return;
                 else {
-                    director.getIExecutionStrategy().execute(lines);
+                    director.executionStrategy.execute(lines);
                 }
             }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private IParser getParser() {
-        return parser;
-    }
-
-    private IExecutionStrategy getIExecutionStrategy() {
-        return IExecutionStrategy;
     }
 }

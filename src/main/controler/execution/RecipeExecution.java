@@ -23,12 +23,11 @@ public class RecipeExecution extends UnfocusedExecution implements IExecutionStr
     }
 
     @Override
-    public void execute(List<String> commandLine) {
-        super.execute(commandLine);
-        if (!commandLine.isEmpty() && commandLine.get(0).equals("/help"))
-            viewManager.helpViewer.printRecipeHelp();
+    protected void showHelp(){
+        viewManager.helpViewer.printRecipeHelp();
     }
 
+    @Override
     protected void executeContextCommand(List<String> commandLine) {
         switch (commandLine.get(0)) {
             case "setRecipeName":{
