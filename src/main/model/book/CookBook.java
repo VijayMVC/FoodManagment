@@ -1,5 +1,6 @@
 package main.model.book;
 
+import main.model.collection.DuplicateCookBookException;
 import main.model.food.Ingredient;
 import main.model.recipe.IRecipeChecker;
 import main.model.recipe.Recipe;
@@ -53,7 +54,7 @@ public class CookBook implements Serializable {
     /**
      * choose subset of Recipe Map according to checker func.
      *
-     * @param checker interface or lambda expression by which subset of CookBook is chosen
+     * @param checker interface instance or lambda expression by which subset of CookBook is chosen
      * @return Map of recipes containing chosen recipes.
      */
     public Map<String, Recipe> getRecipes(IRecipeChecker checker){
@@ -83,9 +84,11 @@ public class CookBook implements Serializable {
     /**
      * merge two cookbooks
      *
-     * @param other Cookbook from which recipes are taken
+     * @param other Cookbook from which recipes are taken to merge
      */
-    public void merge(CookBook other){
+    public void merge(CookBook other) throws MergeSameNamedCookBooks {
+        if(this.getCookBookName().equals(other.getCookBookName()))
+            throw new MergeSameNamedCookBooks();
         for(Recipe recipe : other.recipes.values()){
             Recipe tempRecipe = recipes.get(recipe.getRecipeName());
             if(tempRecipe == null) // not in map
