@@ -7,6 +7,7 @@ import main.model.recipe.Recipe;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class represents Cook Book which aggregate Recipes and provide functionality to get specified
@@ -87,6 +88,15 @@ public class CookBook implements Serializable {
         }
         return recipeMap;
     }
+
+    // Version managed slower on tests
+    public Map<String, Recipe> getRecipes2(IRecipeChecker checker){
+        return recipes.entrySet().stream()
+                .filter(e->checker.check(e.getValue()))
+                .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+    }
+
+
 
     /**
      *choose subset of Recipe Map according to presence of Ingredient on Ingredient list

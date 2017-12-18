@@ -40,7 +40,6 @@ class CookBookTest {
         assertTrue(testCookBook.getRecipe("rissoto") == null );
     }
 
-    //TODO
     @Test
     void getRecipes() throws DuplicateRecipeException, IllegalQuantityValueException, IllegalMeasureArgumentException {
         CookBook testCookBook = new CookBook("testCookBook");

@@ -249,4 +249,11 @@ public class Recipe implements Serializable {
         return false;
     }
 
+    private boolean contains2(IIngredientChecker checker){
+        return recipeIngredientList.stream()
+                .anyMatch(l->checker.checkIfIs(l.getIngredient()));
+    }
+
+
+
 }
