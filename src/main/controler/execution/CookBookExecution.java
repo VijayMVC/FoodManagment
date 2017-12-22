@@ -60,7 +60,7 @@ public class CookBookExecution extends UnfocusedExecution implements IExecutionS
                 viewManager.dataViewer.showIngredients();
                 break;
             }
-            case "showRecipesDoableWith":{
+            case executionStrategy:{
                 showRecipesDoableWith(commandLine);
                 break;
             }

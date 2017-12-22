@@ -14,6 +14,8 @@ import java.util.List;
  * These are important information for Vegetarians and allergy sufferers. Last value is the list of logically
  * appropriate measure units.
  */
+//do przerobienia na klase i zmienic wyjatki na exception
+    // stworz fabryke skladnikow i wyrzucaj tylko i wylacznie potrzebne nie istniejace jeszcze skaldniki
 public enum Ingredient implements Serializable {
     Hazelnut(false, false, true, Arrays.asList(MassMeasureUnit.values())),
     ChickenBreast(true, false, false, Arrays.asList(MassMeasureUnit.values())),

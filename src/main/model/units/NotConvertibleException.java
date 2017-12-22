@@ -14,3 +14,4 @@ public class NotConvertibleException extends Exception {
         super(message);
     }
 }
+

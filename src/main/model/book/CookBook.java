@@ -1,12 +1,11 @@
 package main.model.book;
 
-import main.model.collection.DuplicateCookBookException;
 import main.model.food.Ingredient;
-import main.model.recipe.IRecipeChecker;
 import main.model.recipe.Recipe;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -80,19 +79,19 @@ public class CookBook implements Serializable {
      * @param checker interface instance or lambda expression by which subset of CookBook is chosen
      * @return Map of recipes containing chosen recipes.
      */
-    public Map<String, Recipe> getRecipes(IRecipeChecker checker){
+    public Map<String, Recipe> getRecipes(Predicate<Recipe> checker){
         Map<String, Recipe> recipeMap = new HashMap<>();
         for(Recipe recipe : recipes.values()){
-            if(checker.check(recipe))
+            if(checker.test(recipe))
                 recipeMap.put(recipe.getRecipeName(),recipe);
         }
         return recipeMap;
     }
 
     // Version managed slower on tests
-    public Map<String, Recipe> getRecipes2(IRecipeChecker checker){
+    public Map<String, Recipe> getRecipes2(Predicate<Recipe> checker){
         return recipes.entrySet().stream()
-                .filter(e->checker.check(e.getValue()))
+                .filter(e->checker.test(e.getValue()))
                 .collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
     }
 

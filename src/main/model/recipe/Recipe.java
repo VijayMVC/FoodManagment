@@ -1,12 +1,11 @@
 package main.model.recipe;
-import main.model.book.CookBook;
-import main.model.food.IIngredientChecker;
 import main.model.food.Ingredient;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Class represents recipe, containing ingredients together with directions and preparation time
@@ -241,17 +240,17 @@ public class Recipe implements Serializable {
      * @param checker instance of IIngredient Checker or lambda expression
      * @return true if checker find one fitting Ingredient, otherwise false
      */
-    private boolean contains(IIngredientChecker checker){
+    private boolean contains(Predicate<Ingredient> checker){
         for(RecipeIngredient recipeIngredient : recipeIngredientList){
-            if(checker.checkIfIs(recipeIngredient.getIngredient()))
+            if(checker.test(recipeIngredient.getIngredient()))
                 return true;
         }
         return false;
     }
 
-    private boolean contains2(IIngredientChecker checker){
+    private boolean contains2(Predicate<Ingredient> checker){
         return recipeIngredientList.stream()
-                .anyMatch(l->checker.checkIfIs(l.getIngredient()));
+                .anyMatch(l->checker.test(l.getIngredient()));
     }
 
 

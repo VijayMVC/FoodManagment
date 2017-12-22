@@ -20,7 +20,7 @@ class CookBookCollectionTest {
 
     @Test
     void deserialize() throws IOException, UnnamedCollectionException, ClassNotFoundException {
-        String filepath = "ala123.ser";
+        String filepath = "ala1234.ser";
         CookBookCollection collection2 = new CookBookCollection("ala123");
         assertThrows(IOException.class , ()->CookBookCollection.deserialize(filepath));
         collection2.serialize(filepath);
